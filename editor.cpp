@@ -29,6 +29,7 @@ void Editor::updateCursor()
 
 Editor::Editor(QWidget *parent) : QMainWindow(parent)
 {
+	gridimg = NULL;
 	tileWHLSize = tileHHLSize = 8;
 	view = new TileView(this);
 	view->zoom=1,view->oldzoom=1;
@@ -49,6 +50,8 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 	VRAM = NULL;
 	rows = 32;
 	cols = 16;
+	
+	gridpi = NULL;
 	for (int row = 0; row<rows;row++)
 	{
 		for (int col=0; col<cols; col++)
@@ -59,7 +62,7 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 	}
 	
 	scene = new QGraphicsScene(this);
-	scene->setSceneRect(QRectF(-22.5, -22.5, 1980, 1980)); /*(TWIDTH*cols)+1, (THEIGHT*rows)+1));*/
+	//scene->setSceneRect(QRectF(-22.5, -22.5, 1980, 1980)); /*(TWIDTH*cols)+1, (THEIGHT*rows)+1));*/
 	QRadialGradient gradient(50,0,90);
 	gradient.setSpread(QGradient::ReflectSpread);
 	gradient.setColorAt(0, QColor(143,31,43));
@@ -67,7 +70,7 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 	gradient.setColorAt(1, QColor(100,31,143));
 	scene->setBackgroundBrush(gradient);
 	//scene->setSceneRect(0,0,(9*16)+1);
-	scene->setSceneRect(QRectF(0,0,(9*16)+1,(9*32)+1));
+	//scene->setSceneRect(QRectF(0,0,(9*16)+1,(9*32)+1));
 	
 	
 	
@@ -104,6 +107,8 @@ Editor::~Editor()
 {
 	//delete debugstream;
 	//delete debugfile;
+	if (gridpi !=NULL)
+		delete gridpi;
 	if (VRAM != NULL)
 		delete VRAM;
 	for (int row = 0; row<rows;row++)
@@ -116,6 +121,9 @@ Editor::~Editor()
 	}
 	delete m_LPixmap;
 	delete cursorBuf;
+	
+	if (gridimg != NULL)
+		delete gridimg;
 }
 
 void Editor::setZoom(int factor)
@@ -293,6 +301,8 @@ void Editor::setCurrentFile(const QString &fileName)
     setWindowModified(false);
 }
 
+// Rewriting to just load linear 8x8 tiles with no grid
+// we will later make a grid and displace the tiles
 bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 {
 	quint8 tile[32];
@@ -310,7 +320,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 	// for 8 rows. we need to take each bit from 4 bytes.
 	// same position.. and shift them into their correct position..
 	// then we set the pixel for every 4 bits.
-	VRAM = new QImage((TWIDTH*cols)+1,(THEIGHT*rows)+1, QImage::Format_Indexed8);
+	VRAM = new QImage((TWIDTH*cols),(THEIGHT*rows), QImage::Format_Indexed8);
 	VRAM->setColorCount(129);
 	
 	// there are 32x16 = 512 tiles
@@ -332,7 +342,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 			for (int i=0; i < 16; i+=2)
 			{
 				// if top || bottom fill line with grid color (16)
-				if (i==0)
+				/*if (i==0)
 				{
 					for (int p=0; p<THEIGHT; p++)
 					{
@@ -343,7 +353,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 						//VRAM.setPixel((col*TWIDTH)+(TWIDTH-1),(row*THEIGHT)+p,16);
 					}
 					
-				}
+				}*/
 				// else fill first pixel and last pixel of row
 				quint8 final;
 				t1 = tile[i];
@@ -361,14 +371,15 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 					
 					final = (t4<<3) | (t3<<2) | (t2<<1) | t1;
 					//debugstream<<"final pixel index for x="<<7-n<<": "<<final<<" ";
-					VRAM->setPixel((((col*TWIDTH))+((TWIDTH-1)-n)),(((row*THEIGHT)+1)+(i/2)),final);
+					VRAM->setPixel((((col*TWIDTH))+((TWIDTH-1)-n)),(((row*THEIGHT))+(i/2)),final);
+					// prolly right, maybe not
 				}
 			}
 		}
 	}
 	
 	// do more grid work
-	for (int i=0; i <= rows*THEIGHT; i++)
+	/*for (int i=0; i <= rows*THEIGHT; i++)
 	{
 		VRAM->setPixel(TWIDTH*16, i,128);
 	}
@@ -376,7 +387,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 	for (int i=0; i <= cols*TWIDTH; i++)
 	{
 		VRAM->setPixel(i, THEIGHT*32, 128);
-	}
+	}*/
 	
 	return true;
 }
@@ -384,10 +395,44 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 // Read Raw File 4bpp SNES
 bool Editor::readFile(const QString &fileName)
 {
+	gridimg = new QImage(cols*(TWIDTH+1)+1, rows*(THEIGHT+1)+1, QImage::Format_RGB32);
+	QRgb value = qRgb(0,0,0);
+	for (int row=0; row <= rows; row++)
+	{
+		for (int x=0; x<cols*TWIDTH; x++)
+			gridimg->setPixel(x, (row*THEIGHT)+(row),value);
+	}
+	for (int col=0; col <= cols; col++)
+	{
+		for (int y=0; y<rows*THEIGHT; y++)
+			gridimg->setPixel((col*TWIDTH)+(col),y,value);
+	}
+		
+	gridpixmap = QPixmap::fromImage(*gridimg, Qt::ColorOnly);	// there are options available
+	gridpi = new QGraphicsPixmapItem;
+	gridpi = scene->addPixmap(gridpixmap);
+	gridpi->setOffset(0,0);
+	
+	
 	if (!readTiles(fileName))
 		return false;
 	if (!readColors(fileName))
 		return false;
+	
+	// Make Grid.. should probably make a function for this
+	/*QPen pen(Qt::black);
+	pen.setWidth(1);
+	//pen.setCosmetic(false);
+	pen.setStyle(Qt::SolidLine);*/
+	
+	/*for (int row=0; row <= rows*(THEIGHT+1); row+=(THEIGHT+1))
+	{
+		scene->addLine(0, row+1, cols*(TWIDTH+1), row, pen);
+	}
+	for (int col=0; col <= cols*(TWIDTH+1); col+=(TWIDTH+1))
+	{
+		scene->addLine(col, 0, col, rows*(THEIGHT+1), pen);
+	}*/
 	
 	return true;
 }
@@ -519,7 +564,7 @@ bool Editor::readColors(const QString &fileName)
 			//VRAMgrid[row][col] = new QGraphicsPixmapItem; 
 			VRAMgrid[row][col] = scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
 			//gscene->addPixmap(VRAM8x8[row][col]);
-			VRAMgrid[row][col]->setOffset(col*TWIDTH,row*THEIGHT);
+			VRAMgrid[row][col]->setOffset((col+1)+(col*TWIDTH),(1+row)+(row*THEIGHT)); // +1 for the grid
 			VRAMgrid[row][col]->setFlags(QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable);
 		}
 	}

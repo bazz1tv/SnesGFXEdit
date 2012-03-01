@@ -1,8 +1,8 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#define TWIDTH 9
-#define THEIGHT 9
+#define TWIDTH 8
+#define THEIGHT 8
 //#define ROWS 32
 //#define COLS 16
 
@@ -32,9 +32,9 @@ public:
 	int cols;
 	int tileWHLSize, tileHHLSize;
 	double zoom,oldzoom;
-	QPixmap pixmap;
-	QImage *VRAM;
-	QGraphicsPixmapItem *VRAMgrid[32][16];
+	QPixmap pixmap, gridpixmap;
+	QImage *VRAM, *gridimg;
+	QGraphicsPixmapItem *VRAMgrid[32][16], *gridpi;
 
     void newFile();
     bool save();
