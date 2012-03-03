@@ -11,7 +11,7 @@
 #include <QMainWindow>
 
 class TileView;
-
+class Tile;
 
 class Editor : public QMainWindow
 {
@@ -21,20 +21,21 @@ public:
     Editor(QWidget *parent = 0);
 	~Editor();
 	void resizeEvent ( QResizeEvent * event );
+	void	render ( QPaintDevice * target, const QPoint & targetOffset = QPoint(), const QRegion & sourceRegion = QRegion(), RenderFlags renderFlags = RenderFlags( DrawWindowBackground | DrawChildren ) );
 	//void paintEvent ( QPaintEvent * event );
 	void setZoom(int factor);
-	void updateCursor();
+	//void updateCursor();
 	
 	/// should probs be private, but whatev
 	QGraphicsScene *scene;
 	TileView *view;
 	int rows;
 	int cols;
-	int tileWHLSize, tileHHLSize;
 	double zoom,oldzoom;
 	QPixmap pixmap, gridpixmap;
 	QImage *VRAM, *gridimg;
-	QGraphicsPixmapItem *VRAMgrid[32][16], *gridpi;
+	QGraphicsPixmapItem *gridPI;
+	//Tile *VRAMgrid[32][16];
 
     void newFile();
     bool save();
@@ -51,6 +52,8 @@ protected:
 
 private slots:
     void documentWasModified();
+	void mouseMove(QGraphicsSceneMouseEvent * event);
+	//void initCursorPos();
 
 private:
     bool okToContinue();
@@ -62,8 +65,9 @@ private:
     bool writeFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
-	QPixmap *m_LPixmap, *cursorBuf;
-	QCursor m_Cursor;
+	//QPixmap *cursorBuf;
+	//Tile *cursor;
+	//QCursor m_Cursor;
 	
     QString curFile;
     bool isUntitled;

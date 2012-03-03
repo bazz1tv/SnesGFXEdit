@@ -8,5 +8,13 @@
  */
 #ifndef GLOBALS_H
 #define GLOBALS_H
+#include <QFile>
+#include <QTextStream>
+#include <QCursor>
+
+extern int twidth, theight, rows, cols;
+extern QTextStream debug;
+extern QFile debugfile;
+extern QCursor m_Cursor;
 //extern int tileWHLSize, tileHHLSize;	// tile width highlight size, hight highlight size
 #endif

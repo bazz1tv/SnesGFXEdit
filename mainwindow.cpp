@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 #include "globals.h"
 #include "tileview.h"
+#include "tile.h"
 //#include "gbcf.xpm"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -151,14 +152,14 @@ void MainWindow::updateCursor(int id)
 	// presets
 	if (id <= 8)
 	{
-		editor->tileHHLSize = editor->tileWHLSize = id*8;
+		editor->view->tileHHLSize = editor->view->tileWHLSize = id*8;
 	}
 	// user defined
 	else {
 		
 	}
 	
-	editor->updateCursor();
+	editor->view->updateCursor();
 
 }
 
@@ -215,7 +216,7 @@ void MainWindow::createActions()
 	cursorButtonGroup->addButton(cursorButton4);
 	cursorButtonGroup->setId(cursorButton4, 8);
 	
-	zoomButton1->setChecked(true);
+	zoomButton2->setChecked(true);
 	cursorButton1->setChecked(true);
 	// Zoom Signals
 	connect(zoomButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(setZoom(int)));

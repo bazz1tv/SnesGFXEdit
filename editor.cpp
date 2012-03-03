@@ -3,66 +3,40 @@
 #include "editor.h"
 #include "globals.h"
 #include "tileview.h"
+#include "tile.h"
 
-void Editor::updateCursor()
-{
-	//m_LPixmap = new QPixmap(view->zoom*(x),view->zoom*(y));
-	//m_LPixmap->fill(Qt::transparent); // Otherwise you get a black background :(
-	//QPainter painter(m_LPixmap);
-	//QColor red(255,0,0,128);
-	
-	//painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
-	//painter.setBrush(red);
-	
-	//painter.drawRect(0,0,view->zoom*(x),view->zoom*(y));
-	int factor8w = (tileWHLSize/8)-1;
-	int factor8h = (tileHHLSize/8)-1;
-	
-	// in 1:1 factor8w and h hold how many pixels must be increased by the cursor.
-	// this number must be added into the + zoomfactor*8w 
-	
-	
-	*cursorBuf = m_LPixmap->scaled(view->zoom*(tileWHLSize+factor8w),view->zoom*(tileHHLSize+factor8h));
-	m_Cursor = QCursor(*cursorBuf);
-	setCursor(m_Cursor);
-}
 
 Editor::Editor(QWidget *parent) : QMainWindow(parent)
 {
+	debug<<"Editor created\n";
+	//layout()->setSizeConstraint(QLayout::SetFixedSize);
 	gridimg = NULL;
-	tileWHLSize = tileHHLSize = 8;
 	view = new TileView(this);
-	view->zoom=1,view->oldzoom=1;
+	//setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	
-	cursorBuf = new QPixmap;
-	m_LPixmap = new QPixmap(view->zoom*(tileWHLSize),view->zoom*(tileHHLSize));
-	m_LPixmap->fill(Qt::transparent); // Otherwise you get a black background :(
+	//cursorBuf = new QPixmap;
+	//m_LPixmap = new QPixmap(view->zoom*(view->tileWHLSize),view->zoom*(view->tileHHLSize));
+	/*m_LPixmap->fill(Qt::transparent); // Otherwise you get a black background :(
 	QPainter painter(m_LPixmap);
 	QColor red(255,0,0,128);
 	
 	painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
 	painter.setBrush(red);
 	
-	painter.drawRect(0,0,view->zoom*(tileWHLSize),view->zoom*(tileHHLSize));
-	m_Cursor = QCursor(*m_LPixmap);
-	setCursor(m_Cursor);
+	painter.drawRect(0,0,view->zoom*(view->tileWHLSize),view->zoom*(view->tileHHLSize));
+	m_Cursor = QCursor(*m_LPixmap);*/
+	//setCursor(m_Cursor);
 	
 	VRAM = NULL;
 	rows = 32;
 	cols = 16;
 	
-	gridpi = NULL;
-	for (int row = 0; row<rows;row++)
-	{
-		for (int col=0; col<cols; col++)
-		{
-			// vars??
-			VRAMgrid[row][col] = new QGraphicsPixmapItem; 
-		}
-	}
+	gridPI = NULL;
+	//cursor = new Tile;
+	
 	
 	scene = new QGraphicsScene(this);
-	//scene->setSceneRect(QRectF(-22.5, -22.5, 1980, 1980)); /*(TWIDTH*cols)+1, (THEIGHT*rows)+1));*/
+	//scene->setSceneRect(QRectF(0,0,(TWIDTH*cols+1)+1, (THEIGHT*rows+1)+1));
 	QRadialGradient gradient(50,0,90);
 	gradient.setSpread(QGradient::ReflectSpread);
 	gradient.setColorAt(0, QColor(143,31,43));
@@ -81,18 +55,19 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 	view->setScene(scene);
 	view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 	//view->setMinimumSize(QSize(400,400));
-	//view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	//view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//view->resize(parent->geometry().width(), parent->geometry().height());
 	//view->scale(view->zoom,view->zoom);
 	setCentralWidget(view);
-	setZoom(view->zoom);
+	setZoom(2);
 	
     action = new QAction(this);
     action->setCheckable(true);
 	QObject::connect(action, SIGNAL(triggered()), this, SLOT(show()));
 	QObject::connect(action, SIGNAL(triggered()), this, SLOT(setFocus()));
 
+	//connect(view, SIGNAL(paintEvent(QPaintEvent*)()), this, SLOT(initCursorPos()));
     isUntitled = true;
 
     /*connect(document(), SIGNAL(contentsChanged()),
@@ -101,33 +76,59 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
     //setWindowIcon(QPixmap(":/images/document.png"));
     setWindowTitle("[*]");
     setAttribute(Qt::WA_DeleteOnClose);
+	
+	connect(scene, SIGNAL(mouseMoveEvent(QGraphicsSceneMouseEvent*)), this, SLOT(mouseMove(QGraphicsSceneMouseEvent*)));
+}
+
+void Editor::mouseMove(QGraphicsSceneMouseEvent *event)
+{
+	debug<<"hello??";
+	//QPointF pos(event->pos());
+	//int x,y;
+	
+	// tile
+	//x =  pos.x()/(9*view->zoom);
+	//y = pos.y()/(9*view->zoom);
+	
+	//cursor->setPos(VRAMgrid[x][y]->gridx,VRAMgrid[x][y]->gridy);
+	
 }
 
 Editor::~Editor()
 {
 	//delete debugstream;
 	//delete debugfile;
-	if (gridpi !=NULL)
-		delete gridpi;
+	if (gridPI !=NULL)
+		delete gridPI;
 	if (VRAM != NULL)
 		delete VRAM;
-	for (int row = 0; row<rows;row++)
+	/*for (int row = 0; row<rows;row++)
 	{
 		for (int col=0; col<cols; col++)
 		{
 			// vars??
 			delete VRAMgrid[row][col];
 		}
-	}
-	delete m_LPixmap;
-	delete cursorBuf;
+	}*/
+	//delete m_LPixmap;
+	//delete cursorBuf;
 	
 	if (gridimg != NULL)
 		delete gridimg;
 }
 
+void Editor::render ( QPaintDevice * target, const QPoint & targetOffset, const QRegion & sourceRegion, RenderFlags renderFlags)
+{
+	//resize(view->zoom*(cols*(TWIDTH+1)), view->zoom*(rows*(THEIGHT+1)));
+	QMainWindow::render(target, targetOffset, sourceRegion, renderFlags);
+	
+	//scene->update(scene->sceneRect());
+}
+
 void Editor::setZoom(int factor)
 {
+	QTransform scale;
+	//QWidget *viewport;
 	view->oldzoom = view->zoom;
 	view->zoom = (double)factor;
 	//sizeHint();
@@ -139,10 +140,53 @@ void Editor::setZoom(int factor)
 	// this will help in setting max and mins for the window
 	
 	//view->setScene(scene);
-	view->scale(view->zoom/view->oldzoom,view->zoom/view->oldzoom);
+	//view->scale(view->zoom/view->oldzoom,view->zoom/view->oldzoom);
+	
+	scale.scale(factor,factor);
+	view->setTransform(scale);
+	//view->updateCursor();
+	//resize(400,400);
+	
+	//int frame_x,frame_y, geo_x,geo_y;
+	//frame_x = frameGeometry().width();
+	//frame_y = frameGeometry().height();
+	//geo_x = geometry().width();
+	//geo_y = geometry().height();
+	//QRect newrect(frame_x-geo_x, frame_y-geo_y, factor*(cols*(twidth+1)+1),factor*(rows*(theight+1)+1));
+	//view->setGeometry(newrect);
+	//viewport = view->viewport();
+	//setGeometry(newrect);
+	//viewport->updateGeometry();
+	//resize(factor*(cols*(twidth+1)+1),factor*(rows*(theight+1)+1));
+	//view->update();
+	
+	//resize(1000,1000);
+	//update();
+	//updateGeometry();
+	//view->setMaximumSize(QSize(view->zoom*(cols*TWIDTH+1)+8, view->zoom*(rows*THEIGHT+1)+8));
+	//setFixedSize(QSize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1)));
+	//view->resize();
+	//view->fitInView(0,0,(twidth*(cols+1)),(theight*(rows+1)), Qt::KeepAspectRatioByExpanding);
 	//scene->setSceneRect(0,0,view->zoom/view->oldzoom,view->zoom/view->oldzoom);
-	view->centerOn(0,0);
-	updateCursor();
+	//view->centerOn(0,0);
+	//viewport = view->viewport();
+	//view->setFrameRect(QRect(0,0,factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1));
+	//view->update();
+	//setFrameRect(QRect(0,0,factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1));
+	//resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
+	//view->adjustSize();
+	//adjustSize();
+	//view->hide();
+	//setFixedSize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
+	//view->show();
+	//setMaximumSize(QSize(view->zoom*(cols*TWIDTH+1)+8, view->zoom*(rows*THEIGHT+1)+8));
+	//viewport->resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
+	//viewp
+	//view->sizeHint();
+	//viewport->updateGeometry();
+	//view->updateGeometry();
+	//updateGeometry();
+	//resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
 	//setGeometry(0,0,view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
 	//QWidget *widget = view->viewport();
 	//widget->resize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
@@ -171,13 +215,15 @@ void Editor::setZoom(int factor)
 
 void Editor::resizeEvent ( QResizeEvent * event )
 {
+	//updateCursor();
+	QMainWindow::resizeEvent(event);
+	//resize(view->zoom*cols*(twidth+1)+1,view->zoom*rows*(theight+1)+1);
 	//QResizeEvent *test;
 	//view->centerOn(0,0);
 	
 	//scene->setSceneRect(0,0,event->size().width(),event->size().height() );
 	//view->setSceneRect(0,0,event->size().width(), event->size().height());
-	
-		QMainWindow::resizeEvent(event);
+	//view->fitInView(0,0,cols*(TWIDTH+1)+1, rows*(THEIGHT+1)+1, Qt::KeepAspectRatioByExpanding);
 }
 
 
@@ -215,12 +261,10 @@ QSize Editor::sizeHint() const
 {
     if (VRAM)
 	{
-		QSize size = VRAM->size();
-		size.setHeight(view->zoom/view->oldzoom*size.height());
-		size.setWidth(view->zoom/view->oldzoom*size.width());
+		//QSize size(view->zoom*cols*(twidth+1)+1,view->zoom*rows*(theight+1)+1);
     //if (view->zoom >= 3)
         //size += QSize(1, 1);
-		return size;
+		return QSize(view->zoom*cols*(twidth+1)+1,view->zoom*rows*(theight+1)+1);
 	}
 	else return QMainWindow::sizeHint();
 }
@@ -313,8 +357,8 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
     QDataStream input(&file);
 	input.setByteOrder(QDataStream::LittleEndian);
 	
-	this->rows = rows;
-	this->cols = cols;
+	::rows = rows;
+	::cols = cols;
 	
 	// Code to interpret the tile's index
 	// for 8 rows. we need to take each bit from 4 bytes.
@@ -409,9 +453,9 @@ bool Editor::readFile(const QString &fileName)
 	}
 		
 	gridpixmap = QPixmap::fromImage(*gridimg, Qt::ColorOnly);	// there are options available
-	gridpi = new QGraphicsPixmapItem;
-	gridpi = scene->addPixmap(gridpixmap);
-	gridpi->setOffset(0,0);
+	gridPI = new QGraphicsPixmapItem;
+	gridPI = scene->addPixmap(gridpixmap);
+	gridPI->setOffset(0,0);
 	
 	
 	if (!readTiles(fileName))
@@ -562,13 +606,27 @@ bool Editor::readColors(const QString &fileName)
 		{
 			// vars??
 			//VRAMgrid[row][col] = new QGraphicsPixmapItem; 
-			VRAMgrid[row][col] = scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
+			view->VRAMgrid[row][col]->setPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
+			//VRAMgrid[row][col] = (Tile*)scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
 			//gscene->addPixmap(VRAM8x8[row][col]);
-			VRAMgrid[row][col]->setOffset((col+1)+(col*TWIDTH),(1+row)+(row*THEIGHT)); // +1 for the grid
-			VRAMgrid[row][col]->setFlags(QGraphicsItem::ItemIsFocusable | QGraphicsItem::ItemIsSelectable);
+			view->VRAMgrid[row][col]->setPos((col+1)+(col*TWIDTH),(1+row)+(row*THEIGHT)); // +1 for the grid
+			view->VRAMgrid[row][col]->gridx = (col+1)+(col*TWIDTH);
+			view->VRAMgrid[row][col]->gridy = (1+row)+(row*THEIGHT);
+			view->VRAMgrid[row][col]->row = row;
+			view->VRAMgrid[row][col]->col = col;
+			view->VRAMgrid[row][col]->setFlags(QGraphicsItem::ItemIsFocusable /*| QGraphicsItem::ItemIsSelectable*/
+										 /*| QGraphicsItem::ItemIsMovable*/
+										 |QGraphicsItem::ItemSendsScenePositionChanges);
+			view->VRAMgrid[row][col]->setAcceptHoverEvents(true);
+			scene->addItem(view->VRAMgrid[row][col]);
 		}
 	}
 	
+	
+	debug<<"itemX: "<<view->VRAMgrid[0][0]->x()<<" itemY: "<<view->VRAMgrid[0][0]->y()<<endl;
+	debug<<"itemX: "<<view->VRAMgrid[1][1]->x()<<" itemY: "<<view->VRAMgrid[1][1]->y()<<endl;
+	
+	scene->addItem(view->cursoritem);
 	
 	/*VRAM8x8[0][0] = pixmap.copy(0,0,8,8);
 	 gscene->addPixmap(VRAM8x8[0][0]);
