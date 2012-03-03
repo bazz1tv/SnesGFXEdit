@@ -14,7 +14,9 @@ public:
 	double zoom,oldzoom;
 	int tileWHLSize, tileHHLSize;
 	QGraphicsPixmapItem *cursoritem;
+	Tile *placeritem;
 	QPixmap cursorbuf, cursorbuf2,cursorpix;
+	QPixmap placerbuf, placerbuf2,placerpix;
 	bool firstPaint, swap;
 	Tile *VRAMgrid[32][16];
 

@@ -627,6 +627,8 @@ bool Editor::readColors(const QString &fileName)
 	debug<<"itemX: "<<view->VRAMgrid[1][1]->x()<<" itemY: "<<view->VRAMgrid[1][1]->y()<<endl;
 	
 	scene->addItem(view->cursoritem);
+	view->placeritem->gridx = -1;
+	scene->addItem(view->placeritem);
 	
 	/*VRAM8x8[0][0] = pixmap.copy(0,0,8,8);
 	 gscene->addPixmap(VRAM8x8[0][0]);

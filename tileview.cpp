@@ -57,23 +57,35 @@ TileView::TileView(QWidget *parent)
 	swap = false;
 	
 	cursoritem = new QGraphicsPixmapItem;
+	placeritem = new Tile;
 	cursorpix = QPixmap(1,1);
 	cursorpix.fill(QColor(0,0,0,0));
 	setCursor(cursorpix);
 	//cursor->setPos(1,1);
 	cursorpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
+	placerpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
+	placerpix.fill(Qt::transparent);
 	cursorpix.fill(Qt::transparent); // Otherwise you get a black background :(
-	QPainter painter(&cursorpix);
+	QPainter painter(&cursorpix), painter2(&placerpix);
 	QColor red(255,0,0,128);
+	QColor yellow (120,40,10,128);
 	
 	painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
-	painter.setBrush(red);
+	painter2.setPen(Qt::NoPen);
+	painter.setBrush(yellow);
+	painter2.setBrush(red);
 	
 	painter.drawRect(0,0,zoom*(tileWHLSize),zoom*(tileHHLSize));
 	cursorbuf = QPixmap(cursorpix);
 	
+	painter2.drawRect(0,0,zoom*(tileWHLSize),zoom*(tileHHLSize));
+	placerbuf = QPixmap(placerpix);
+	
 	cursoritem->setPixmap(cursorbuf);
 	cursoritem->setPos(1,1);
+	
+	placeritem->setPixmap(placerbuf);
+	placeritem->setVisible(false);
 	
 	debug<<"cursor: w: "<<cursoritem->pixmap().width()<<" h: "<<cursoritem->pixmap().height()<<endl;
 	

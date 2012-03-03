@@ -28,7 +28,7 @@ Tile::Tile(QGraphicsItem *parent)
 	colliding_different_tile = 0;
 	approvedTile = NULL;
 	prev_collided_Tile = NULL;
-	selected = true;
+	selected = false;
 	//originalpix = pixmap();
 }
 
@@ -151,30 +151,38 @@ QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
-	//QGraphicsPixmapItem::mouseReleaseEvent(event);
+	TileView *view = (TileView*)scene()->views().at(0);
+	selected = !selected;
 	
-	selected = false;
-	ungrabMouse();
-	
-	if (prev_collided_Tile)
+	if (selected)
 	{
-		/*QPixmap buffer;
-		buffer = this->pixmap();
-		this->setPixmap(collidingTile->pixmap());
-		collidingTile->setPixmap(buffer);
-		newPos.setX(gridx);
-		newPos.setY(gridy);
-		setPos(newPos);
-		approvedTile = NULL;
-		setSelected(false);*/
 		originalpix = pixmap();
-		prev_collided_Tile->originalpix = prev_collided_Tile->pixmap();
+		//QGraphicsPixmapItem::mousePressEvent(event);
+		debug<<"mouse press\n";
+		debug<<"VRAM["<<row<<"]["<<col<<"] Pressed"<<endl;
+		//selected = true;
+		grabMouse();
+		prev_collided_Tile = NULL;
+		//row_offset = col_offset = 0;
+		view->placeritem->setVisible(true);
+		view->cursoritem->setVisible(false);
+		view->placeritem->setPos(gridx,gridy);
+		//QPointF coords(event->scenePos());
+		//setOffset(coords);
+		//QGraphicsPixmapItem::mouseReleaseEvent(event);
 	}
-	else {
-		//setPixmap(originalpix);
-		//setPos(gridx,gridy);
-		//setTransform(QTransform(1,0,0,0,1,0,0,0,1));
-		//update();
+	else 
+	{
+		ungrabMouse();
+		view->cursoritem->setVisible(true);
+		view->placeritem->setVisible(false);
+		view->cursoritem->setPos(view->placeritem->pos());
+	
+		if (prev_collided_Tile)
+		{
+			originalpix = pixmap();
+			prev_collided_Tile->originalpix = prev_collided_Tile->pixmap();
+		}
 	}
 
 
@@ -193,93 +201,57 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		// X = (col+1)+(col*TWIDTH), Y = (1+row)+(row*THEIGHT)
 		QPointF p(event->scenePos());
 		debug<<"oX: "<<p.x()<<" oY: "<<p.y()<<endl;
-		Tile *compass[4];
+
+		//Tile *compass[4];
+		Tile *adjacent;
 		
-		for (i=0; i < 4; i++)
-			compass[i] = NULL;
+		//for (i=0; i < 4; i++)
+			//compass[i] = NULL;
 		
-		if (row+row_offset > 0)
-			compass[0] = view->VRAMgrid[row-1+row_offset][col];
-		if (row < (rows+row_offset-1))
-			compass[1] = view->VRAMgrid[row+1+row_offset][col];
-		if (col+col_offset > 0)
-			compass[2] = view->VRAMgrid[row][col-1+col_offset];
-		if (col < (cols+col_offset-1))
-			compass[3] = view->VRAMgrid[row][col+1+col_offset];
+		//new collision code
 		
-		for (i=0; i<4; i++)
+		//QGraphicsItem *tmp = 
+		adjacent = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y())));
+		
+		
+		if ((adjacent->pixmap().width() == twidth) && (adjacent->pixmap().height() == theight) && (adjacent->gridx != -1))
 		{
-			if (compass[i] != NULL)
-			{
-				//QPointF pf = mapToItem(compass[i], p);
-				debug<<"iX: "<<compass[i]->pos().x()<<" iY: "<<compass[i]->pos().y()<<endl;
-				
-				// time to do the checking
-				QPointF cp = compass[i]->pos();
-				bool collided=false;
-				for (int y=0; y < theight; y++)
-				{
-					for (int x=0; x < twidth; x++)
-					{
-						if (collided) break;
-						
-						debug<<"compare x("<<cp.x()+x<<") with ("<<floor(p.x())<<")\n";
-						if ((cp.x()+x) == floor(p.x())) //|| (((cp.x()+x) < p.x()) && ((cp.x()+x+1) > p.x())))
-						{
-							debug<<"compare y("<<cp.y()+y<<") with ("<<floor(p.y())<<")\n";
-							if ((cp.y()+y) == floor(p.y()))
-							{
-								debug<<"YES!!!\n";
-								collided=true;
-							}
-						}
-					}
-					if (collided) break;
-				}
-				if (collided)
-				{
-					if (prev_collided_Tile && ((prev_collided_Tile->row == compass[i]->row) && (prev_collided_Tile->col == compass[i]->col)))
-						break;
-					debug<<"compass["<<i<<"] is a match\n";
-					if (prev_collided_Tile)
-						prev_collided_Tile->setPixmap(pixmap());
-				
-					row_offset = compass[i]->row-row;
-					col_offset = compass[i]->col-col;
-					setPixmap(compass[i]->pixmap());
-					compass[i]->setPixmap(originalpix);
-					view->cursoritem->setPos(compass[i]->gridx,compass[i]->gridy);
-					prev_collided_Tile = compass[i];
-				}
-			}
-			//setPos(gridx,gridy);
+			debug<<"Row : "<<adjacent->row<<" Col: "<<adjacent->col<<endl;
+			if (prev_collided_Tile && ((prev_collided_Tile->row == adjacent->row) && (prev_collided_Tile->col == adjacent->col)))
+				return;
+			//debug<<"compass["<<i<<"] is a match\n";
+			if (prev_collided_Tile)
+				prev_collided_Tile->setPixmap(pixmap());
+		
+			//row_offset = compass[i]->row-row;
+			//col_offset = compass[i]->col-col;
+			//setPixmap(compass[i]->pixmap());
+			setPixmap(adjacent->pixmap());
+			adjacent->setPixmap(originalpix);
+			//compass[i]->setPixmap(originalpix);
+			view->placeritem->setPos(adjacent->gridx,adjacent->gridy);
+			prev_collided_Tile = adjacent;
 		}
-		
-		/*TileView *view = (TileView*)scene()->views().at(0);
-		Tile *temp;
-		if ((temp = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->itemAt((p)))))
-		{
-			if (temp->pixmap().width() == twidth && temp->pixmap().height() == theight)
-				debug<<"Moved into VRAM["<<temp->row<<"]["<<temp->col<<"]"<<endl;
-		}*/
-		//setPos(event->pos());
-		//view->cursoritem->setPos(event->pos());
 	}
 	
 }
 
 void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
+	/*TileView *view = (TileView*)scene()->views().at(0);
 	originalpix = pixmap();
 	//QGraphicsPixmapItem::mousePressEvent(event);
 	debug<<"mouse press\n";
 	debug<<"VRAM["<<row<<"]["<<col<<"] Pressed"<<endl;
-	selected = true;
+	//selected = true;
 	grabMouse();
 	prev_collided_Tile = NULL;
 	row_offset = col_offset = 0;
+	view->placeritem->setVisible(true);
+	view->cursoritem->setVisible(false);
+	view->placeritem->setPos(gridx,gridy);
 	//QPointF coords(event->scenePos());
-	//setOffset(coords);
+	//setOffset(coords);*/
 }
 
 void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
