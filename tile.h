@@ -12,6 +12,8 @@
 
 #include <QGraphicsPixmapItem>
 
+class TileView;
+
 class Tile : public QGraphicsPixmapItem
 {
     //Q_OBJECT
@@ -28,6 +30,7 @@ public:
 	int row,col, row_offset, col_offset;
 	bool selected;
 	QPixmap originalpix;
+	TileView *view;
 	
 protected:
 	void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );

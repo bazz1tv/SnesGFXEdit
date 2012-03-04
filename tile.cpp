@@ -28,110 +28,18 @@ Tile::Tile(QGraphicsItem *parent)
 	colliding_different_tile = 0;
 	approvedTile = NULL;
 	prev_collided_Tile = NULL;
+	view = NULL;
 	selected = false;
+	//preview_original = false;
 	//originalpix = pixmap();
 }
 
 QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
 {	
-	shit = false;
-	/*if (change == ItemSelectedHasChanged)
+	QPointF newPos;
+	if (change == ItemPositionChange)
 	{
-		TileView *view = (TileView*)scene()->views().at(0);
-		QPointF pf(pos());
-		QPoint p;
-		
-		p = scene()->views().at(0)->mapFromScene(pf);
-		p = scene()->views().at(0)->mapToGlobal(p);
-		p.setX(p.x()+(view->zoom*(view->tileWHLSize/2)));
-		p.setY(p.y()+(view->zoom*(view->tileHHLSize/2)));
-		//m_Cursor.setPos(p);
-		//something_happened
-	}
-	if (change == ItemScenePositionHasChanged && scene()) {
-		debug<<"Item Position Change\n";
-		// checking if more than half of the bounding rect is colliding with ancolliding tile
-		// if so, then switch
-		// value is the new position.
 		newPos = value.toPointF();
-		collide_center_old = collide_center;
-		
-		QList<QGraphicsItem *> list;
-		
-		list = collidingItems(Qt::IntersectsItemShape);
-		// lets try just for 1 collision for now
-		//Tile *tile;
-		int chosen=-1;
-		for (int i=0; i < list.count(); i++)
-		{
-			collidingTile = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(list.at(i));
-			debug<<"testing";
-			if (collidingTile->pixmap().width() == twidth)
-			{
-				chosen = i;
-				break;
-			}
-		}
-		
-		
-		if (chosen != -1)
-		{
-			debug<<"FOUND ONE\n";
-			int x_offset = x();
-			int y_offset = y();
-			//tile = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(list.at(chosen));
-			debug<<"X: "<<collidingTile->x()<<" Y: "<<collidingTile->y()<<endl;
-			collide_center.setX(collidingTile->x()+(collidingTile->pixmap().width()/2));
-			collide_center.setY(collidingTile->y()+(collidingTile->pixmap().height()/2));
-			
-			/*if (collide_center != collide_center_old)
-				colliding_different_tile = 0;
-			else {
-				colliding_different_tile = 1151;
-			}*/
-
-			/*
-			while(1)
-			{
-				for (int y=0; y < pixmap().height(); y++)
-				{
-					for (int x=0; x < pixmap().width(); x++)
-					{
-						if (x_offset+x == collide_center.x())
-							if (y_offset+y == collide_center.y())
-							{
-								debug<<"HAPPENING";
-								// set a boolean 
-								shit=true;
-								approvedTile = collidingTile;
-								//collidingTile = tile;
-								// do the rest when the mouse click comes up
-								
-								// Snap code
-								/*if (colliding_different_tile < 1150)
-								{
-									TileView *view = (TileView*)scene()->views().at(0);
-									// snap cursor to the colliding tile
-									QPointF pf(collidingTile->pos());
-									QPoint p;
-									
-									p = view->mapFromScene(pf);
-									p = view->mapToGlobal(p);
-									p.setX(p.x()+(view->zoom*(view->tileWHLSize/2)));
-									p.setY(p.y()+(view->zoom*(view->tileHHLSize/2)));
-									//QCursor::setPos(p);
-									//m_Cursor.setPos(p);
-									//setPos(collidingTile->gridx,collidingTile->gridy);
-								}
-								else if (colliding_different_tile > 50)
-									colliding_different_tile = 1151;*//*
-							}
-					}
-				}
-				break;
-			}
-		}
-		
 		// how to match up bounding rects
 		// do it only if the edge of this tile is in the center of colliding tile
 		// take a QPoint for the center of colliding tile
@@ -145,13 +53,13 @@ QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
 			newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
 			return newPos;
 		}
-	}*/
+	}
 	return QGraphicsItem::itemChange(change, value);
 }
 
 void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
-	TileView *view = (TileView*)scene()->views().at(0);
+	//TileView *view = (TileView*)scene()->views().at(0);
 	selected = !selected;
 	
 	if (selected)
@@ -174,6 +82,7 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	else 
 	{
 		ungrabMouse();
+		//setVisible(true);
 		view->cursoritem->setVisible(true);
 		view->placeritem->setVisible(false);
 		view->cursoritem->setPos(view->placeritem->pos());
@@ -195,8 +104,7 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 	debug<<"mouseMove\n";
 	if (selected)
 	{
-		int i;
-		TileView *view = (TileView*)scene()->views().at(0);
+		debug<<"Selected: Row="<<row<<", col="<<col<<endl;
 		// algorithm
 		// X = (col+1)+(col*TWIDTH), Y = (1+row)+(row*THEIGHT)
 		QPointF p(event->scenePos());
@@ -221,12 +129,19 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 				return;
 			//debug<<"compass["<<i<<"] is a match\n";
 			if (prev_collided_Tile)
-				prev_collided_Tile->setPixmap(pixmap());
+			{
+				prev_collided_Tile->setPixmap(prev_collided_Tile->originalpix);
+			}
 		
-			//row_offset = compass[i]->row-row;
-			//col_offset = compass[i]->col-col;
-			//setPixmap(compass[i]->pixmap());
-			setPixmap(adjacent->pixmap());
+			if (view->preview_original == false)
+			{
+				setPixmap(view->blanktile);
+			}
+			else
+			{
+				setPixmap(adjacent->pixmap());
+			}
+			
 			adjacent->setPixmap(originalpix);
 			//compass[i]->setPixmap(originalpix);
 			view->placeritem->setPos(adjacent->gridx,adjacent->gridy);
@@ -257,7 +172,8 @@ void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
 	//QGraphicsPixmapItem::hoverEnterEvent(event);
-	TileView *view = (TileView*)scene()->views().at(0);
+	if (!view)
+		view = (TileView*)scene()->views().at(0);
 	view->cursoritem->setPos(gridx,gridy);
 }
 

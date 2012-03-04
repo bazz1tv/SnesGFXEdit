@@ -18,7 +18,10 @@ public:
 	QPixmap cursorbuf, cursorbuf2,cursorpix;
 	QPixmap placerbuf, placerbuf2,placerpix;
 	bool firstPaint, swap;
+	bool preview_original;
 	Tile *VRAMgrid[32][16];
+	QPixmap blanktile;
+	
 
 protected:
 	QSize sizeHint() const;

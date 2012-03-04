@@ -77,7 +77,7 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
     setWindowTitle("[*]");
     setAttribute(Qt::WA_DeleteOnClose);
 	
-	connect(scene, SIGNAL(mouseMoveEvent(QGraphicsSceneMouseEvent*)), this, SLOT(mouseMove(QGraphicsSceneMouseEvent*)));
+	//connect(scene, SIGNAL(mouseMoveEvent(QGraphicsSceneMouseEvent*)), this, SLOT(mouseMove(QGraphicsSceneMouseEvent*)));
 }
 
 void Editor::mouseMove(QGraphicsSceneMouseEvent *event)
@@ -129,78 +129,12 @@ void Editor::setZoom(int factor)
 {
 	QTransform scale;
 	//QWidget *viewport;
-	view->oldzoom = view->zoom;
+	view->oldzoom = view->zoom; //old
 	view->zoom = (double)factor;
-	//sizeHint();
-	//view->setSceneRect(QRectF(0, 0,view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1)));
-	//scene->setSceneRect(QRectF(0, 0,view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1)));
-	
-	// ok figuring it out
-	// check if oldview->zoom is bigger than new view->zoom and vice versa
-	// this will help in setting max and mins for the window
-	
-	//view->setScene(scene);
-	//view->scale(view->zoom/view->oldzoom,view->zoom/view->oldzoom);
 	
 	scale.scale(factor,factor);
 	view->setTransform(scale);
-	//view->updateCursor();
-	//resize(400,400);
 	
-	//int frame_x,frame_y, geo_x,geo_y;
-	//frame_x = frameGeometry().width();
-	//frame_y = frameGeometry().height();
-	//geo_x = geometry().width();
-	//geo_y = geometry().height();
-	//QRect newrect(frame_x-geo_x, frame_y-geo_y, factor*(cols*(twidth+1)+1),factor*(rows*(theight+1)+1));
-	//view->setGeometry(newrect);
-	//viewport = view->viewport();
-	//setGeometry(newrect);
-	//viewport->updateGeometry();
-	//resize(factor*(cols*(twidth+1)+1),factor*(rows*(theight+1)+1));
-	//view->update();
-	
-	//resize(1000,1000);
-	//update();
-	//updateGeometry();
-	//view->setMaximumSize(QSize(view->zoom*(cols*TWIDTH+1)+8, view->zoom*(rows*THEIGHT+1)+8));
-	//setFixedSize(QSize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1)));
-	//view->resize();
-	//view->fitInView(0,0,(twidth*(cols+1)),(theight*(rows+1)), Qt::KeepAspectRatioByExpanding);
-	//scene->setSceneRect(0,0,view->zoom/view->oldzoom,view->zoom/view->oldzoom);
-	//view->centerOn(0,0);
-	//viewport = view->viewport();
-	//view->setFrameRect(QRect(0,0,factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1));
-	//view->update();
-	//setFrameRect(QRect(0,0,factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1));
-	//resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
-	//view->adjustSize();
-	//adjustSize();
-	//view->hide();
-	//setFixedSize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
-	//view->show();
-	//setMaximumSize(QSize(view->zoom*(cols*TWIDTH+1)+8, view->zoom*(rows*THEIGHT+1)+8));
-	//viewport->resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
-	//viewp
-	//view->sizeHint();
-	//viewport->updateGeometry();
-	//view->updateGeometry();
-	//updateGeometry();
-	//resize(factor*cols*(twidth+1)+1,factor*rows*(theight+1)+1);
-	//setGeometry(0,0,view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//QWidget *widget = view->viewport();
-	//widget->resize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//view->setViewport(widget);
-	//view->resize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//scene->setSceneRect(0,0,view->zoom*((cols*TWIDTH)+1), view->zoom*((rows*THEIGHT)+1));
-	//view->setScene(scene);
-	//view->setMinimumSize(QSize(scene->sceneRect().width(), scene->sceneRect().height()));
-	//resize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//view->setMaximumSize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//scene->setMaximumSize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//parentWidget()->setMaximumSize(view->zoom*(cols*TWIDTH+1), view->zoom*(rows*THEIGHT+1));
-	//sizeHint();
-	//resize(minimumSizeHint());
 }
 
 /*void Editor::paintEvent ( QPaintEvent * event )
@@ -577,16 +511,20 @@ bool Editor::readColors(const QString &fileName)
 	else
 		VRAM->setColor(128, qRgb(0,0,0)); // grid color
 	
-	/*for (int i=0; i < 16; i++)
+	// do BlankTile
+	QImage blank(twidth,theight, QImage::Format_Indexed8);
+	blank.setColorCount(1);
+	blank.setColor(0, VRAM->color(0));
+	for (int y=0; y<theight; y++)
 	{
-		*debugstream<<"Color "<<i<<": "<<VRAM->color(i)<<endl;
-	}*/
-	//QImage img = VRAM.convertToFormat(QImage::Format_ARGB32);
-	//*debugstream<<"Saving";
-	//if (VRAM.save("/Users/bazz/test.png","BMP"))
-	//*debugstream<<"Saved";
+		for (int x=0; x<twidth; x++)
+		{
+			blank.setPixel(x,y, 0);
+		}
+	}
 	
-	//*debugstream<<endl<<VRAM->pixelIndex(0,0);
+	view->blanktile = QPixmap::fromImage(blank, Qt::ColorOnly);
+	
 	
 	
 	pixmap = QPixmap::fromImage(*VRAM, Qt::ColorOnly);	// there are options available
@@ -607,6 +545,7 @@ bool Editor::readColors(const QString &fileName)
 			// vars??
 			//VRAMgrid[row][col] = new QGraphicsPixmapItem; 
 			view->VRAMgrid[row][col]->setPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
+			view->VRAMgrid[row][col]->originalpix = view->VRAMgrid[row][col]->pixmap();
 			//VRAMgrid[row][col] = (Tile*)scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
 			//gscene->addPixmap(VRAM8x8[row][col]);
 			view->VRAMgrid[row][col]->setPos((col+1)+(col*TWIDTH),(1+row)+(row*THEIGHT)); // +1 for the grid

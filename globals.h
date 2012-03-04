@@ -12,6 +12,7 @@
 #include <QTextStream>
 #include <QCursor>
 
+
 extern int twidth, theight, rows, cols;
 extern QTextStream debug;
 extern QFile debugfile;

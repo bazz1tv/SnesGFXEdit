@@ -29,18 +29,13 @@ void TileView::updateCursor()
 	//zoomx = round(zoomx);
 	//zoomy = round(zoomy);
 	
-	if (swap)
-	{
-		cursorbuf2 = cursorpix.scaled((tileWHLSize+factor8w),(tileHHLSize+factor8h));
-		cursoritem->setPixmap(cursorbuf2);
-		cursorbuf = NULL;
-	}
-	else
-	{
-		cursorbuf = cursorpix.scaled((tileWHLSize+factor8w),(tileHHLSize+factor8h));
-		cursoritem->setPixmap(cursorbuf);
-		cursorbuf2=NULL;
-	}
+	
+	cursorbuf = cursorpix.scaled((tileWHLSize+factor8w),(tileHHLSize+factor8h));
+	cursoritem->setPixmap(cursorbuf);
+	
+	placerbuf = placerpix.scaled((tileWHLSize+factor8w),(tileHHLSize+factor8h));
+	placeritem->setPixmap(placerbuf);
+		
 	
 	debug<<"cursor: w: "<<cursoritem->pixmap().width()<<" h: "<<cursoritem->pixmap().height()<<endl;
 	//cursor->setOffset(1,1);
@@ -55,6 +50,7 @@ TileView::TileView(QWidget *parent)
 	zoom = 1;
 	firstPaint = true;
 	swap = false;
+	preview_original = true;
 	
 	cursoritem = new QGraphicsPixmapItem;
 	placeritem = new Tile;
