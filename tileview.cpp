@@ -49,11 +49,12 @@ TileView::TileView(QWidget *parent)
 	tileWHLSize = tileHHLSize = 8;
 	zoom = 1;
 	firstPaint = true;
-	swap = false;
+	swap = true;
 	preview_original = true;
 	
 	cursoritem = new QGraphicsPixmapItem;
 	placeritem = new Tile;
+	selected_tile = new Tile;
 	cursorpix = QPixmap(1,1);
 	cursorpix.fill(QColor(0,0,0,0));
 	setCursor(cursorpix);

@@ -15,6 +15,7 @@ public:
 	int tileWHLSize, tileHHLSize;
 	QGraphicsPixmapItem *cursoritem;
 	Tile *placeritem;
+	Tile *selected_tile;
 	QPixmap cursorbuf, cursorbuf2,cursorpix;
 	QPixmap placerbuf, placerbuf2,placerpix;
 	bool firstPaint, swap;

@@ -65,6 +65,9 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	if (selected)
 	{
 		originalpix = pixmap();
+		view->selected_tile->setPixmap(pixmap());
+		view->selected_tile->setPos(gridx,gridy);
+		view->selected_tile->setVisible(true);
 		//QGraphicsPixmapItem::mousePressEvent(event);
 		debug<<"mouse press\n";
 		debug<<"VRAM["<<row<<"]["<<col<<"] Pressed"<<endl;
@@ -86,11 +89,17 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 		view->cursoritem->setVisible(true);
 		view->placeritem->setVisible(false);
 		view->cursoritem->setPos(view->placeritem->pos());
+		
+		view->selected_tile->setVisible(false);
 	
 		if (prev_collided_Tile)
 		{
-			originalpix = pixmap();
-			prev_collided_Tile->originalpix = prev_collided_Tile->pixmap();
+			setPixmap(prev_collided_Tile->pixmap());
+			prev_collided_Tile->setPixmap(originalpix);
+			
+			
+			//originalpix = pixmap();
+			//prev_collided_Tile->originalpix = prev_collided_Tile->pixmap();
 		}
 	}
 
@@ -119,32 +128,42 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		//new collision code
 		
 		//QGraphicsItem *tmp = 
+		
 		adjacent = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y())));
-		
-		
-		if ((adjacent->pixmap().width() == twidth) && (adjacent->pixmap().height() == theight) && (adjacent->gridx != -1))
+		if (adjacent->gridx == -1) // if we detect the cursor image on top
 		{
+			// get tile underneath
+			adjacent = view->VRAMgrid[(int)(floor(p.y())-1)/(theight+1)][(int)(floor(p.x())-1)/(twidth+1)];
+			
+		}
+
+		
+		
+		if ((adjacent->pixmap().width() == twidth) && (adjacent->pixmap().height() == theight))
+		{
+			//Tile *adj_ptr = adjacent;
 			debug<<"Row : "<<adjacent->row<<" Col: "<<adjacent->col<<endl;
 			if (prev_collided_Tile && ((prev_collided_Tile->row == adjacent->row) && (prev_collided_Tile->col == adjacent->col)))
 				return;
 			//debug<<"compass["<<i<<"] is a match\n";
 			if (prev_collided_Tile)
 			{
-				prev_collided_Tile->setPixmap(prev_collided_Tile->originalpix);
+				//prev_collided_Tile->setPixmap(prev_collided_Tile->originalpix);
 			}
 		
-			if (view->preview_original == false)
+			if (view->swap == false)
 			{
 				setPixmap(view->blanktile);
 			}
 			else
 			{
 				setPixmap(adjacent->pixmap());
+				
 			}
 			
-			adjacent->setPixmap(originalpix);
-			//compass[i]->setPixmap(originalpix);
-			view->placeritem->setPos(adjacent->gridx,adjacent->gridy);
+			int x=adjacent->gridx, y=adjacent->gridy;
+			view->selected_tile->setPos(x,y);
+			view->placeritem->setPos(x,y);
 			prev_collided_Tile = adjacent;
 		}
 	}
