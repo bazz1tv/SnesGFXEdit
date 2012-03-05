@@ -16,8 +16,8 @@ public:
 	QGraphicsPixmapItem *cursoritem;
 	Tile *placeritem;
 	Tile *selected_tile;
-	QPixmap cursorbuf, cursorbuf2,cursorpix;
-	QPixmap placerbuf, placerbuf2,placerpix;
+	QPixmap cursorbuf, cursorpix;
+	QPixmap placerbuf, placerpix;
 	bool firstPaint;
 	unsigned int tilemode, tilesize;
 	bool preview_original;
@@ -25,6 +25,7 @@ public:
 	QPixmap blanktile, VRAMpixmap;
 	bool tilesize_lock;
 	QCursor cursor;
+	QPixmap mousepix,mousepixbuf;
 	
 
 protected:
@@ -33,6 +34,9 @@ protected:
     void wheelEvent(QWheelEvent *event);
 	void showEvent ( QShowEvent * event );
 	void resizeEvent ( QResizeEvent * event );
+	void mouseReleaseEvent ( QMouseEvent * event );
+	
+	
 	
 };
 

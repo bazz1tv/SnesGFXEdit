@@ -62,8 +62,14 @@ QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
 	return QGraphicsItem::itemChange(change, value);
 }
 
+/*void Tile::doMouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+	mouseReleaseEvent(event);
+}*/
+
 void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
+	
 	//TileView *view = (TileView*)scene()->views().at(0);
 	selected = !selected;
 	
@@ -75,11 +81,15 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 		{
 			if (view->tilesize == SIZE_16x16)
 			{
-				ref = topleft16x16;
-				//ungrabMouse();
-				//selected = false;
-				//topleft16x16->mouseReleaseEvent(event);
-				//return;
+				ref = ref->topleft16x16;
+			}
+			else if (view->tilesize == SIZE_32x32)
+			{
+				ref = ref->topleft32x32;
+			}
+			else if (view->tilesize == SIZE_64x64)
+			{
+				ref = ref->topleft64x64;
 			}
 		}
 		
@@ -192,6 +202,10 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		
 		if (view->tilesize == SIZE_16x16)
 			tile_undercursor = tile_undercursor->topleft16x16;
+		else if (view->tilesize == SIZE_32x32)
+			tile_undercursor = tile_undercursor->topleft32x32;
+		else if (view->tilesize == SIZE_64x64)
+			tile_undercursor = tile_undercursor->topleft64x64;
 		
 		debug<<"undercursor: topleft16x16: "<<tile_undercursor->row<<","<<tile_undercursor->col<<endl;
 		
@@ -234,16 +248,10 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 				int x;  
 				int y;
 				
-				if (view->tilesize == SIZE_8x8)
-				{
-					x = tile_undercursor->gridx, 
-					y=tile_undercursor->gridy;
-				}
-				else if (view->tilesize == SIZE_16x16)
-				{
-					x = tile_undercursor->gridx;
-					y = tile_undercursor->gridy;
-				}
+				
+				x = tile_undercursor->gridx, 
+				y=tile_undercursor->gridy;
+				
 				view->selected_tile->setPos(x,y);
 				view->placeritem->setPos(x,y);
 				
@@ -284,10 +292,15 @@ void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
 	//QGraphicsPixmapItem::hoverEnterEvent(event);
+	
 	if (!view)
 		view = (TileView*)scene()->views().at(0);
 	if (view->tilesize == SIZE_16x16)
 		view->cursoritem->setPos(topleft16x16->gridx,topleft16x16->gridy);
+	else if(view->tilesize == SIZE_32x32)
+		view->cursoritem->setPos(topleft32x32->gridx, topleft32x32->gridy);
+	else if(view->tilesize == SIZE_64x64)
+		view->cursoritem->setPos(topleft64x64->gridx, topleft64x64->gridy);
 	else
 		view->cursoritem->setPos(gridx,gridy);
 }

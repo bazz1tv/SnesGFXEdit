@@ -134,7 +134,7 @@ void Editor::setZoom(int factor)
 	
 	scale.scale(factor,factor);
 	view->setTransform(scale);
-	
+	view->updateCursor();
 }
 
 /*void Editor::paintEvent ( QPaintEvent * event )
@@ -392,6 +392,7 @@ bool Editor::readFile(const QString &fileName)
 	//scene->setBackgroundBrush(painter);
 	gridPI = scene->addPixmap(gridpixmap);
 	gridPI->setPos(0,0);
+	gridPI->setAcceptHoverEvents(false);
 	
 	
 	if (!readTiles(fileName))
@@ -541,27 +542,59 @@ bool Editor::readColors(const QString &fileName)
 	// width and height stay 8x8
 	// but must move 16 across and 32 down (tiles)
 	// QRect(x,y,width,height)
-	bool flip = true;
-	quint8 twocount=0;
-	Tile *ptr = view->VRAMgrid[0][0];
+	
+	Tile *ptr32x32, *ptr64x64;
+	Tile *ptr16x16 = ptr32x32 = ptr64x64 = view->VRAMgrid[0][0];
 	
 	for (int row = 0; row<rows;row++)
 	{
 		for (int col=0; col<cols; col++)
 		{
 			// vars?? 
-			//VRAMgrid[row][col] = new QGraphicsPixmapItem; 
+			//VRAMgrid[row][col] = new QGraphitopleft64x64csPixmapItem; 
 			// do the 16x16 top left algorithm
+			if (row%8==0)
+			{
+				if (col%8 == 0)
+				{
+					ptr64x64 = view->VRAMgrid[row][col];
+					debug<<"ptr = ["<<row<<"]["<<col<<"]\n";
+					//twocount = 0;
+				}
+				view->VRAMgrid[row][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+1][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+2][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+3][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+4][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+5][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+6][col]->topleft64x64 = ptr64x64;
+				view->VRAMgrid[row+7][col]->topleft64x64 = ptr64x64;
+			}
+			
+			if (row%4==0)
+			{
+				if (col%4 == 0)
+				{
+					ptr32x32 = view->VRAMgrid[row][col];
+					debug<<"ptr = ["<<row<<"]["<<col<<"]\n";
+					//twocount = 0;
+				}
+				view->VRAMgrid[row][col]->topleft32x32 = ptr32x32;
+				view->VRAMgrid[row+1][col]->topleft32x32 = ptr32x32;
+				view->VRAMgrid[row+2][col]->topleft32x32 = ptr32x32;
+				view->VRAMgrid[row+3][col]->topleft32x32 = ptr32x32;
+			}
+			
 			if (row%2 == 0)
 			{
 				if (col%2 == 0)
 				{
-					ptr = view->VRAMgrid[row][col];
+					ptr16x16 = view->VRAMgrid[row][col];
 					debug<<"ptr = ["<<row<<"]["<<col<<"]\n";
 					//twocount = 0;
 				}
-				view->VRAMgrid[row][col]->topleft16x16 = ptr;
-				view->VRAMgrid[row+1][col]->topleft16x16 = ptr;
+				view->VRAMgrid[row][col]->topleft16x16 = ptr16x16;
+				view->VRAMgrid[row+1][col]->topleft16x16 = ptr16x16;
 				debug<<"["<<row<<"], ["<<col<<"]\n";
 			}
 			//view->VRAMgrid[row][col]->zone16x16 = flip;

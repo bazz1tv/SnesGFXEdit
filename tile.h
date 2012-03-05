@@ -33,8 +33,10 @@ public:
 	TileView *view;
 	int movebywidth,movebyheight;
 	bool zone16x16, zone32x32;
-	Tile *topleft16x16;
+	Tile *topleft16x16, *topleft32x32, *topleft64x64;
 	int sig;
+	
+	//void doMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 	
 protected:
 	void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );

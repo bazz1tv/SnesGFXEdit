@@ -35,6 +35,10 @@ void TileView::updateCursor()
 	
 	placerbuf = placerpix.scaled((tileWHLSize+factor8w),(tileHHLSize+factor8h));
 	placeritem->setPixmap(placerbuf);
+	
+	//mousepixbuf = mousepix.scaled(zoom*1,zoom*1);
+	//cursor = QCursor(mousepixbuf);
+	//setCursor(mousepixbuf);
 		
 	
 	debug<<"cursor: w: "<<cursoritem->pixmap().width()<<" h: "<<cursoritem->pixmap().height()<<endl;
@@ -58,23 +62,24 @@ TileView::TileView(QWidget *parent)
 	cursoritem = new QGraphicsPixmapItem;
 	placeritem = new Tile;
 	selected_tile = new Tile;
-	cursorpix = QPixmap(1,1);
-	cursorpix.fill(QColor(0,0,0,0));
-	cursor = QPixmap(cursorpix);
-	setCursor(cursor);
+	mousepix = QPixmap(1,1);
+	mousepix.fill(Qt::transparent);
+	//mousepix.fill(QColor(0,0,0,255));
+	//cursor = QCursor(mousepix);
+	setCursor(mousepix);
 	//cursor->setPos(1,1);
 	cursorpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
 	placerpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
 	placerpix.fill(Qt::transparent);
 	cursorpix.fill(Qt::transparent); // Otherwise you get a black background :(
 	QPainter painter(&cursorpix), painter2(&placerpix);
-	QColor red(255,0,0,128);
-	QColor yellow (120,40,10,128);
+	QColor red(120,30,45,45);
+	QColor yellow(200,200,120,80); 
 	
 	painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
 	painter2.setPen(Qt::NoPen);
-	painter.setBrush(yellow);
-	painter2.setBrush(red);
+	painter.setBrush(red);
+	painter2.setBrush(yellow);
 	
 	painter.drawRect(0,0,zoom*(tileWHLSize),zoom*(tileHHLSize));
 	cursorbuf = QPixmap(cursorpix);
@@ -143,4 +148,21 @@ void TileView::wheelEvent(QWheelEvent *event)
     zoom = std::pow(1.125, numSteps);
     scale(zoom, zoom);*/
 	QGraphicsView::wheelEvent(event);
+}
+
+void TileView::mouseReleaseEvent ( QMouseEvent * event )
+{
+	/*QGraphicsItem* item = (this->scene()->itemAt(event->pos()));
+		
+	debug<<"event pos: "<<event->pos().x()<<","<<event->pos().y()<<endl;
+	if (item != NULL)
+	{
+		if (!item->acceptsHoverEvents())
+		{
+			Tile *tmp = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(this->scene()->itemAt(event->pos().x()+4,event->pos().y()));
+			if (tmp != NULL)
+				tmp->doMouseReleaseEvent(NULL);
+		}
+	}*/
+	QGraphicsView::mouseReleaseEvent(event);
 }
