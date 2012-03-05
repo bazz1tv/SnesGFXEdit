@@ -153,6 +153,7 @@ void MainWindow::updateCursor(int id)
 	if (id <= 8)
 	{
 		editor->view->tileHHLSize = editor->view->tileWHLSize = id*8;
+		editor->view->tilesize = id;
 	}
 	// user defined
 	else {

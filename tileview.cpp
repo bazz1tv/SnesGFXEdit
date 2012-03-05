@@ -49,15 +49,19 @@ TileView::TileView(QWidget *parent)
 	tileWHLSize = tileHHLSize = 8;
 	zoom = 1;
 	firstPaint = true;
-	swap = true;
+	tilemode = MODE_SWAP;
+	tilesize = SIZE_8x8;
 	preview_original = true;
+	
+	//tilesize_lock = true;
 	
 	cursoritem = new QGraphicsPixmapItem;
 	placeritem = new Tile;
 	selected_tile = new Tile;
 	cursorpix = QPixmap(1,1);
 	cursorpix.fill(QColor(0,0,0,0));
-	setCursor(cursorpix);
+	cursor = QPixmap(cursorpix);
+	setCursor(cursor);
 	//cursor->setPos(1,1);
 	cursorpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
 	placerpix = QPixmap(zoom*(tileWHLSize),zoom*(tileHHLSize));
@@ -98,6 +102,7 @@ TileView::TileView(QWidget *parent)
 
 void TileView::paintEvent ( QPaintEvent * event )
 {
+	// sets the cursor inside the view on load
 	if (firstPaint)
 	{
 		QCursor::setPos(mapToGlobal(QPoint(twidth/2,theight/2)));

@@ -22,7 +22,7 @@ public:
     Tile(QGraphicsItem *parent = 0);
 	int gridx, gridy;
 	bool shit;
-	Tile* prev_collided_Tile, *approvedTile;
+	Tile* prev_collided_Tile, *approvedTile, *ref;
 	QPointF newPos;
 	QPoint collide_center, collide_center_old;
 	bool alreadyentered_tilezone;
@@ -31,6 +31,10 @@ public:
 	bool selected;
 	QPixmap originalpix;
 	TileView *view;
+	int movebywidth,movebyheight;
+	bool zone16x16, zone32x32;
+	Tile *topleft16x16;
+	int sig;
 	
 protected:
 	void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );

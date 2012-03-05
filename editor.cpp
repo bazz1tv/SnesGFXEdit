@@ -388,8 +388,10 @@ bool Editor::readFile(const QString &fileName)
 		
 	gridpixmap = QPixmap::fromImage(*gridimg, Qt::ColorOnly);	// there are options available
 	gridPI = new QGraphicsPixmapItem;
+	//QPainter painter(&gridpixmap);
+	//scene->setBackgroundBrush(painter);
 	gridPI = scene->addPixmap(gridpixmap);
-	gridPI->setOffset(0,0);
+	gridPI->setPos(0,0);
 	
 	
 	if (!readTiles(fileName))
@@ -528,6 +530,7 @@ bool Editor::readColors(const QString &fileName)
 	
 	
 	pixmap = QPixmap::fromImage(*VRAM, Qt::ColorOnly);	// there are options available
+	view->VRAMpixmap = pixmap;
 	//gscene->addPixmap(pixmap);
 	//setCentralWidget(gview); // change to graphics view
 	//gview->show();
@@ -538,12 +541,31 @@ bool Editor::readColors(const QString &fileName)
 	// width and height stay 8x8
 	// but must move 16 across and 32 down (tiles)
 	// QRect(x,y,width,height)
+	bool flip = true;
+	quint8 twocount=0;
+	Tile *ptr = view->VRAMgrid[0][0];
+	
 	for (int row = 0; row<rows;row++)
 	{
 		for (int col=0; col<cols; col++)
 		{
-			// vars??
+			// vars?? 
 			//VRAMgrid[row][col] = new QGraphicsPixmapItem; 
+			// do the 16x16 top left algorithm
+			if (row%2 == 0)
+			{
+				if (col%2 == 0)
+				{
+					ptr = view->VRAMgrid[row][col];
+					debug<<"ptr = ["<<row<<"]["<<col<<"]\n";
+					//twocount = 0;
+				}
+				view->VRAMgrid[row][col]->topleft16x16 = ptr;
+				view->VRAMgrid[row+1][col]->topleft16x16 = ptr;
+				debug<<"["<<row<<"], ["<<col<<"]\n";
+			}
+			//view->VRAMgrid[row][col]->zone16x16 = flip;
+			
 			view->VRAMgrid[row][col]->setPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
 			view->VRAMgrid[row][col]->originalpix = view->VRAMgrid[row][col]->pixmap();
 			//VRAMgrid[row][col] = (Tile*)scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
@@ -558,6 +580,8 @@ bool Editor::readColors(const QString &fileName)
 										 |QGraphicsItem::ItemSendsScenePositionChanges);
 			view->VRAMgrid[row][col]->setAcceptHoverEvents(true);
 			scene->addItem(view->VRAMgrid[row][col]);
+			
+			//twocount++;
 		}
 	}
 	

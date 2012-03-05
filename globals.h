@@ -12,6 +12,12 @@
 #include <QTextStream>
 #include <QCursor>
 
+#define MODE_SWAP 0
+#define MODE_MOVE 1
+
+#define SIZE_8x8 1
+#define SIZE_16x16 2
+#define SIZE_32x32 4
 
 extern int twidth, theight, rows, cols;
 extern QTextStream debug;

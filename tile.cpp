@@ -29,9 +29,14 @@ Tile::Tile(QGraphicsItem *parent)
 	approvedTile = NULL;
 	prev_collided_Tile = NULL;
 	view = NULL;
+	ref = this;
 	selected = false;
-	//preview_original = false;
-	//originalpix = pixmap();
+	
+	topleft16x16 = NULL;
+	
+	sig = 0xfafa;
+	zone16x16 = true;
+	zone32x32 = true;
 }
 
 QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -64,9 +69,34 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	
 	if (selected)
 	{
-		originalpix = pixmap();
-		view->selected_tile->setPixmap(pixmap());
-		view->selected_tile->setPos(gridx,gridy);
+		ref = this;
+		// save original pixmap
+		if (view->tilemode == MODE_SWAP)
+		{
+			if (view->tilesize == SIZE_16x16)
+			{
+				ref = topleft16x16;
+				//ungrabMouse();
+				//selected = false;
+				//topleft16x16->mouseReleaseEvent(event);
+				//return;
+			}
+		}
+		
+		ref->originalpix = ref->pixmap();
+		movebywidth = (view->tileWHLSize/8)-1;
+		movebyheight = (view->tileHHLSize/8)-1;
+		
+		// selected tile
+		QPixmap selection(view->tileWHLSize+((view->tileWHLSize/8)-1), view->tileHHLSize+((view->tileWHLSize/8)-1));
+		selection.fill(Qt::transparent);
+		QPainter painter(&selection);
+		QRect rect(0,0,view->tileWHLSize+((view->tileWHLSize/8)-1), view->tileHHLSize+((view->tileWHLSize/8)-1));
+		QRect viewport(ref->gridx,ref->gridy,view->tileWHLSize+((view->tileWHLSize/8)-1), view->tileHHLSize+((view->tileWHLSize/8)-1));
+		view->scene()->render(&painter, rect, viewport);
+		
+		view->selected_tile->setPixmap(selection);
+		view->selected_tile->setPos(ref->gridx,ref->gridy);
 		view->selected_tile->setVisible(true);
 		//QGraphicsPixmapItem::mousePressEvent(event);
 		debug<<"mouse press\n";
@@ -77,7 +107,7 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 		//row_offset = col_offset = 0;
 		view->placeritem->setVisible(true);
 		view->cursoritem->setVisible(false);
-		view->placeritem->setPos(gridx,gridy);
+		view->placeritem->setPos(ref->gridx,ref->gridy);
 		//QPointF coords(event->scenePos());
 		//setOffset(coords);
 		//QGraphicsPixmapItem::mouseReleaseEvent(event);
@@ -94,9 +124,26 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 	
 		if (prev_collided_Tile)
 		{
-			setPixmap(prev_collided_Tile->pixmap());
-			prev_collided_Tile->setPixmap(originalpix);
-			
+			for (int y=0; y <= movebyheight; y++)
+			{
+				for (int x=0; x <= movebywidth; x++)
+				{
+					Tile *original_tile = view->VRAMgrid[ref->row+y][ref->col+x];
+					Tile *newtile = view->VRAMgrid[prev_collided_Tile->row+y][prev_collided_Tile->col+x];
+					original_tile->setPixmap(newtile->pixmap());
+					
+					newtile->setPixmap(original_tile->originalpix);
+					newtile->originalpix = original_tile->originalpix;
+					
+					newtile->setPixmap(original_tile->originalpix);
+					newtile->originalpix = original_tile->originalpix;
+					
+					original_tile->originalpix = original_tile->pixmap();
+				}
+			}
+			//setPixmap(prev_collided_Tile->pixmap());
+			//prev_collided_Tile->setPixmap(originalpix);
+			//prev_collided_Tile->originalpix = originalpix;
 			
 			//originalpix = pixmap();
 			//prev_collided_Tile->originalpix = prev_collided_Tile->pixmap();
@@ -111,6 +158,16 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 {
 	//QGraphicsPixmapItem::mouseMoveEvent(event);
 	debug<<"mouseMove\n";
+	/*QPoint mousepos(event->scenePos().x(),event->scenePos().y());
+	debug<<"old mouse pos: "<<event->scenePos().x()<<","<<event->scenePos().y()<<endl;
+	if ((int)mousepos.x() % 10 == 9)
+		mousepos.setX(mousepos.x()+1);
+	if ((int)mousepos.y() % 10 == 9)
+		mousepos.setY(mousepos.y()+1);
+	QCursor::setPos(view->mapToGlobal(mousepos));
+	mousepos = view->mapToGlobal(mousepos);
+	debug<<"new mouse pos: "<<mousepos.x()<<","<<mousepos.y()<<endl;*/
+	
 	if (selected)
 	{
 		debug<<"Selected: Row="<<row<<", col="<<col<<endl;
@@ -118,57 +175,93 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		// X = (col+1)+(col*TWIDTH), Y = (1+row)+(row*THEIGHT)
 		QPointF p(event->scenePos());
 		debug<<"oX: "<<p.x()<<" oY: "<<p.y()<<endl;
-
-		//Tile *compass[4];
-		Tile *adjacent;
+		Tile *tile_undercursor = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y())));
 		
-		//for (i=0; i < 4; i++)
-			//compass[i] = NULL;
-		
-		//new collision code
-		
-		//QGraphicsItem *tmp = 
-		
-		adjacent = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y())));
-		if (adjacent->gridx == -1) // if we detect the cursor image on top
+		/*if (tile_undercursor->gridx == -1) // if we detect the cursor image on top
 		{
 			// get tile underneath
-			adjacent = view->VRAMgrid[(int)(floor(p.y())-1)/(theight+1)][(int)(floor(p.x())-1)/(twidth+1)];
+			tile_undercursor = view->VRAMgrid[(int)(floor(p.y())-1)/(theight+1)][(int)(floor(p.x())-1)/(twidth+1)];
 			
-		}
+		}*/
+		
+		tile_undercursor = view->VRAMgrid[(int)(floor(p.y())-1)/(theight+1)][(int)(floor(p.x())-1)/(twidth+1)];
 
 		
+		//if (view->tilesize == SIZE_16x16 && (tile_undercursor->topleft16x16->row == row && tile_undercursor->topleft16x16->col == col))
+			//return;
 		
-		if ((adjacent->pixmap().width() == twidth) && (adjacent->pixmap().height() == theight))
+		if (view->tilesize == SIZE_16x16)
+			tile_undercursor = tile_undercursor->topleft16x16;
+		
+		debug<<"undercursor: topleft16x16: "<<tile_undercursor->row<<","<<tile_undercursor->col<<endl;
+		
+		/*if (!((abs((tile_undercursor->col-col))%(2) == 0) && (abs((tile_undercursor->row-row))%(2) == 0)))
+			return;*/
+		// mode specific
+		/*int col_diff16x16 = ((tile_undercursor->col-col));
+		int row_diff16x16 = ((tile_undercursor->row-row));
+		
+		if (view->tileHHLSize == 16 && view->tileWHLSize == 16)
 		{
-			//Tile *adj_ptr = adjacent;
-			debug<<"Row : "<<adjacent->row<<" Col: "<<adjacent->col<<endl;
-			if (prev_collided_Tile && ((prev_collided_Tile->row == adjacent->row) && (prev_collided_Tile->col == adjacent->col)))
+			if (!(col_diff16x16%2 == 0 && row_diff16x16%2 == 0) &&
+				!(col_diff16x16%2 == -1) && !(col_diff16x16%3 == -2))
 				return;
-			//debug<<"compass["<<i<<"] is a match\n";
-			if (prev_collided_Tile)
-			{
-				//prev_collided_Tile->setPixmap(prev_collided_Tile->originalpix);
-			}
+		}*/
 		
-			if (view->swap == false)
+		// check tile zone
+		
+		if (view->tilemode == MODE_SWAP)
+		{
+			if ((tile_undercursor->pixmap().width() == twidth) && (tile_undercursor->pixmap().height() == theight))
 			{
-				setPixmap(view->blanktile);
-			}
-			else
-			{
-				setPixmap(adjacent->pixmap());
+				if (view->tilesize == SIZE_8x8 && prev_collided_Tile && ((prev_collided_Tile->row == tile_undercursor->row) && (prev_collided_Tile->col == tile_undercursor->col)))
+					return;
 				
+				// preview
+				for (int y=0; y <= movebyheight; y++)
+				{
+					for (int x=0; x <= movebywidth; x++)
+					{
+						/*if (x == 0 && y == 0)
+						{
+							continue;
+						}*/
+						Tile *tile = view->VRAMgrid[tile_undercursor->row+y][tile_undercursor->col+x];
+						view->VRAMgrid[ref->row+y][ref->col+x]->setPixmap(tile->pixmap());
+					}
+				}
+				
+				int x;  
+				int y;
+				
+				if (view->tilesize == SIZE_8x8)
+				{
+					x = tile_undercursor->gridx, 
+					y=tile_undercursor->gridy;
+				}
+				else if (view->tilesize == SIZE_16x16)
+				{
+					x = tile_undercursor->gridx;
+					y = tile_undercursor->gridy;
+				}
+				view->selected_tile->setPos(x,y);
+				view->placeritem->setPos(x,y);
+				
+				prev_collided_Tile = tile_undercursor;
 			}
-			
-			int x=adjacent->gridx, y=adjacent->gridy;
-			view->selected_tile->setPos(x,y);
-			view->placeritem->setPos(x,y);
-			prev_collided_Tile = adjacent;
 		}
 	}
 	
 }
+
+/*void Tile::Swap(Tile *one, Tile *two)
+{
+	one->setPixmap(two->pixmap());
+	
+	int x=two->gridx, y=two->gridy;
+	view->selected_tile->setPos(x,y);
+	view->placeritem->setPos(x,y);
+}*/
 
 void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 {
@@ -193,7 +286,10 @@ void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 	//QGraphicsPixmapItem::hoverEnterEvent(event);
 	if (!view)
 		view = (TileView*)scene()->views().at(0);
-	view->cursoritem->setPos(gridx,gridy);
+	if (view->tilesize == SIZE_16x16)
+		view->cursoritem->setPos(topleft16x16->gridx,topleft16x16->gridy);
+	else
+		view->cursoritem->setPos(gridx,gridy);
 }
 
 

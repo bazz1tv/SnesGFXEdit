@@ -18,10 +18,13 @@ public:
 	Tile *selected_tile;
 	QPixmap cursorbuf, cursorbuf2,cursorpix;
 	QPixmap placerbuf, placerbuf2,placerpix;
-	bool firstPaint, swap;
+	bool firstPaint;
+	unsigned int tilemode, tilesize;
 	bool preview_original;
 	Tile *VRAMgrid[32][16];
-	QPixmap blanktile;
+	QPixmap blanktile, VRAMpixmap;
+	bool tilesize_lock;
+	QCursor cursor;
 	
 
 protected:
