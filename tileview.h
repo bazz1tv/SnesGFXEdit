@@ -4,6 +4,14 @@
 #include <QGraphicsView>
 #include "tile.h"
 
+struct VRAM_Marker {
+	//int x,y;
+	QGraphicsEllipseItem *circle;
+	int row,col;
+	QPen pen;
+	QBrush brush;
+};
+
 class TileView : public QGraphicsView
 {
     Q_OBJECT
@@ -11,6 +19,8 @@ class TileView : public QGraphicsView
 public:
     TileView(QWidget *parent = 0);
 	void updateCursor();
+	void setupActions();
+	
 	double zoom,oldzoom;
 	int tileWHLSize, tileHHLSize;
 	QGraphicsPixmapItem *cursoritem;
@@ -22,11 +32,18 @@ public:
 	unsigned int tilemode, tilesize;
 	bool preview_original;
 	Tile *VRAMgrid[32][16];
+	QImage VRAMgrid_img[32][16];
 	QPixmap blanktile, VRAMpixmap;
 	bool tilesize_lock;
 	QCursor cursor;
 	QPixmap mousepix,mousepixbuf;
 	
+	VRAM_Marker start_marker, stop_marker;
+	QAction *setVRAMStartMarker, *setVRAMStopMarker;
+	
+private slots:
+	void setStartMarker();
+	void setStopMarker();
 
 protected:
 	QSize sizeHint() const;

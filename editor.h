@@ -35,6 +35,8 @@ public:
 	QPixmap pixmap, gridpixmap;
 	QImage *VRAM, *gridimg;
 	QGraphicsPixmapItem *gridPI;
+	
+	//QVector<QRgb> colortable;
 	//Tile *VRAMgrid[32][16];
 
     void newFile();

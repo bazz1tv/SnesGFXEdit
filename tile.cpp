@@ -37,6 +37,8 @@ Tile::Tile(QGraphicsItem *parent)
 	sig = 0xfafa;
 	zone16x16 = true;
 	zone32x32 = true;
+	
+	hovering = false;
 }
 
 QVariant Tile::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -138,15 +140,23 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 			{
 				for (int x=0; x <= movebywidth; x++)
 				{
+					QImage buf;
+					
 					Tile *original_tile = view->VRAMgrid[ref->row+y][ref->col+x];
 					Tile *newtile = view->VRAMgrid[prev_collided_Tile->row+y][prev_collided_Tile->col+x];
+					
+					// swap QImage copy' tiles
+					buf = view->VRAMgrid_img[ref->row+y][ref->col+x];
+					view->VRAMgrid_img[ref->row+y][ref->col+x] = view->VRAMgrid_img[prev_collided_Tile->row+y][prev_collided_Tile->col+x];
+					view->VRAMgrid_img[prev_collided_Tile->row+y][prev_collided_Tile->col+x] = buf;
+					
 					original_tile->setPixmap(newtile->pixmap());
 					
 					newtile->setPixmap(original_tile->originalpix);
 					newtile->originalpix = original_tile->originalpix;
 					
-					newtile->setPixmap(original_tile->originalpix);
-					newtile->originalpix = original_tile->originalpix;
+					//newtile->setPixmap(original_tile->originalpix);
+					//newtile->originalpix = original_tile->originalpix;
 					
 					original_tile->originalpix = original_tile->pixmap();
 				}
@@ -287,11 +297,13 @@ void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 	view->placeritem->setPos(gridx,gridy);
 	//QPointF coords(event->scenePos());
 	//setOffset(coords);*/
+	//hovering = true;
 }
 
 void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
 	//QGraphicsPixmapItem::hoverEnterEvent(event);
+	//hovering = true;
 	
 	if (!view)
 		view = (TileView*)scene()->views().at(0);
@@ -305,4 +317,7 @@ void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 		view->cursoritem->setPos(gridx,gridy);
 }
 
-
+void Tile::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
+{
+	//hovering = false;
+}

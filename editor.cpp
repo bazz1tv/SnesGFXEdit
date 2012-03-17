@@ -102,12 +102,14 @@ Editor::~Editor()
 		delete gridPI;
 	if (VRAM != NULL)
 		delete VRAM;
+
 	/*for (int row = 0; row<rows;row++)
 	{
 		for (int col=0; col<cols; col++)
 		{
 			// vars??
-			delete VRAMgrid[row][col];
+			if (VRAMgrid_img[row][col])
+				delete VRAMgrid_img[row][col];
 		}
 	}*/
 	//delete m_LPixmap;
@@ -301,6 +303,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 	VRAM = new QImage((TWIDTH*cols),(THEIGHT*rows), QImage::Format_Indexed8);
 	VRAM->setColorCount(129);
 	
+	bool end = false;
 	// there are 32x16 = 512 tiles
 	for (int row=0; row < rows; row++)
 	{
@@ -312,6 +315,13 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 			{
 				if (input.status() == QDataStream::ReadPastEnd)
 				{
+					if (!end)
+					{
+						end = true;
+						view->stop_marker.row = row;
+						view->stop_marker.col = col;
+					}
+					
 					tile[i] = 0;
 				}
 				else input>>tile[i];
@@ -319,20 +329,6 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 			
 			for (int i=0; i < 16; i+=2)
 			{
-				// if top || bottom fill line with grid color (16)
-				/*if (i==0)
-				{
-					for (int p=0; p<THEIGHT; p++)
-					{
-						VRAM->setPixel(((col*TWIDTH)+p),((row)*THEIGHT),128);
-						//VRAM.setPixel(((col*TWIDTH)+p),(row*THEIGHT)+(THEIGHT-1),16);
-						
-						VRAM->setPixel(col*TWIDTH,(row*THEIGHT)+p,128);
-						//VRAM.setPixel((col*TWIDTH)+(TWIDTH-1),(row*THEIGHT)+p,16);
-					}
-					
-				}*/
-				// else fill first pixel and last pixel of row
 				quint8 final;
 				t1 = tile[i];
 				t2 = tile[i+1];
@@ -348,9 +344,7 @@ bool Editor::readTiles(const QString &fileName, int rows=32, int cols=16)
 					t4 = (tile[i+17]>>n) & 0x01;
 					
 					final = (t4<<3) | (t3<<2) | (t2<<1) | t1;
-					//debugstream<<"final pixel index for x="<<7-n<<": "<<final<<" ";
 					VRAM->setPixel((((col*TWIDTH))+((TWIDTH-1)-n)),(((row*THEIGHT))+(i/2)),final);
-					// prolly right, maybe not
 				}
 			}
 		}
@@ -394,7 +388,6 @@ bool Editor::readFile(const QString &fileName)
 	gridPI->setPos(0,0);
 	gridPI->setAcceptHoverEvents(false);
 	
-	
 	if (!readTiles(fileName))
 		return false;
 	if (!readColors(fileName))
@@ -414,6 +407,10 @@ bool Editor::readFile(const QString &fileName)
 	{
 		scene->addLine(col, 0, col, rows*(THEIGHT+1), pen);
 	}*/
+	
+	//QGraphicsItem *item = scene->addPixmap(QPixmap::fromImage(view->VRAMgrid_img[1][1],Qt::ColorOnly));
+	//item->setPos(10,10);
+
 	
 	return true;
 }
@@ -599,6 +596,7 @@ bool Editor::readColors(const QString &fileName)
 			}
 			//view->VRAMgrid[row][col]->zone16x16 = flip;
 			
+			view->VRAMgrid_img[row][col] = VRAM->copy(twidth*col, theight*row, twidth, theight);
 			view->VRAMgrid[row][col]->setPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
 			view->VRAMgrid[row][col]->originalpix = view->VRAMgrid[row][col]->pixmap();
 			//VRAMgrid[row][col] = (Tile*)scene->addPixmap(pixmap.copy(TWIDTH*col,THEIGHT*row,TWIDTH,THEIGHT));
@@ -629,25 +627,29 @@ bool Editor::readColors(const QString &fileName)
 	scene->addItem(view->placeritem);
 	view->selected_tile->setVisible(false);
 	
+	scene->addItem(view->start_marker.circle);
+	scene->addItem(view->stop_marker.circle);
 	
-	/*VRAM8x8[0][0] = pixmap.copy(0,0,8,8);
-	 gscene->addPixmap(VRAM8x8[0][0]);
-	 VRAM8x8[0][1] = pixmap.copy(8,0,8,8);
-	 gscene->addPixmap(VRAM8x8[0][1]);
-	 */
-	//setCentralWidget(view);
-	//gview->centerOn(0,0);
+	Tile *ptr = view->VRAMgrid[view->start_marker.row][view->start_marker.col];
 	
-	//resize(((TWIDTH*cols)+1)*2, ((THEIGHT*rows)+1)*2);
-	//view->setWindowTitle("BLAH");
-	//view->show();
-	//adjustSize();
+	//view->start_marker.circle->setX(view->VRAMgrid[view->start_marker.row][view->start_marker.col]->x());
+	//view->start_marker.circle->setY(view->VRAMgrid[view->stop_marker.row][view->stop_marker.col]->y());
+	view->start_marker.circle->setRect(ptr->x()+(twidth-2),ptr->y()+2, 2,2);
+	
+	ptr = view->VRAMgrid[view->stop_marker.row][view->stop_marker.col];
+	//view->stop_marker.circle->setX(view->VRAMgrid[view->stop_marker.row][view->stop_marker.col]->x());
+	//view->stop_marker.circle->setY(view->VRAMgrid[view->stop_marker.row][view->stop_marker.col]->y());
+	view->stop_marker.circle->setRect(ptr->x()+(twidth-2), ptr->y()+2,2,2);
+	
 	return true;
 }
 
 bool Editor::writeFile(const QString &fileName)
 {
     QFile file(fileName);
+	QDataStream out(&file);
+	//out.setByteOrder(QDataStream::LittleEndian);
+	//QImage image;
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(this, tr("MDI Editor"),
                              tr("Cannot write file %1:\n%2.")
@@ -656,8 +658,86 @@ bool Editor::writeFile(const QString &fileName)
         return false;
     }
 
-    QTextStream out(&file);
+    //QTextStream out(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
+	
+	// do it here
+	/*int lastcol=0,lastrow=0;
+	for (int row=rows-1; row >= 0; row--)
+	{
+		for (int col=cols-1; col >= 0; col--)
+		{
+			QImage tileimg = view->VRAMgrid_img[row][col];
+			
+			for (int y=0; y < theight; y++)
+			{
+				for (int x=0; x < twidth; x++)
+				{
+					int p = tileimg.pixelIndex(x,y);
+					if (p != 0)
+					{
+						lastrow = row;
+						lastcol = col;
+						break;
+					}
+				}
+				if (lastcol)
+					break;
+			}
+			if (lastcol)
+				break;
+			
+		}
+		if (lastcol)
+			break;
+	}*/
+	
+	for (int row=0; row < rows; row++)
+	{
+		for (int col=0; col < cols; col++)
+		{
+			// each image is 8x8
+			// thats 64 pixels 4 bits each
+			//image = pixmap.toImage().convertToFormat(QImage::Format_RGB888 ); 
+			//image = image.convertToFormat(QImage::Format_Indexed8, Qt::AvoidDither);
+			QImage tileimg = view->VRAMgrid_img[row][col];
+			quint8 tile[32], p, bit[4];
+			int offset = 0;
+			
+			for (int y=0; y < theight; y++)
+			{
+				bit[0] = 0;
+				bit[1] = 0;
+				bit[2] = 0;
+				bit[3] = 0;
+				for (int x=0; x < twidth; x++)
+				{
+					p = tileimg.pixelIndex(x,y);
+					bit[0] |= ((p & 0x1) << (7-x));
+					bit[1] |= (((p & 0x2)>>1) << (7-x));
+					bit[2] |= (((p & 0x4)>>2) << (7-x));
+					bit[3] |= (((p & 0x8)>>3) << (7-x));
+				}
+				
+				tile[offset] = bit[0]; tile[offset+1] = bit[1];
+				tile[offset+16] = bit[2]; tile[offset+17] = bit[3];
+				offset+=2;
+			}
+			
+			
+			for (int i=0; i<32; i++) // 32 bytes to a tile
+			{
+				out<<tile[i];
+			}
+			
+			/*if (row == (lastrow) && col == (lastcol))
+				break;*/
+		}
+		
+		/*if (row == (lastrow))
+			break;*/
+	}
+	
     //out << toPlainText();
     QApplication::restoreOverrideCursor();
     return true;

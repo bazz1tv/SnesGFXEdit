@@ -39,7 +39,6 @@ void TileView::updateCursor()
 	//mousepixbuf = mousepix.scaled(zoom*1,zoom*1);
 	//cursor = QCursor(mousepixbuf);
 	//setCursor(mousepixbuf);
-		
 	
 	debug<<"cursor: w: "<<cursoritem->pixmap().width()<<" h: "<<cursoritem->pixmap().height()<<endl;
 	//cursor->setOffset(1,1);
@@ -49,6 +48,14 @@ void TileView::updateCursor()
 TileView::TileView(QWidget *parent)
     : QGraphicsView(parent)
 {
+	for (int row=0; row < rows; row++)
+	{
+		for (int col=0; col < cols; col++)
+		{
+			//VRAMgrid_img[row][col] = new QImage;
+		}
+	}
+	
     setDragMode(NoDrag);
 	tileWHLSize = tileHHLSize = 8;
 	zoom = 1;
@@ -57,7 +64,25 @@ TileView::TileView(QWidget *parent)
 	tilesize = SIZE_8x8;
 	preview_original = true;
 	
-	//tilesize_lock = true;
+	setupActions();
+	
+	start_marker.circle = new QGraphicsEllipseItem;
+	stop_marker.circle = new QGraphicsEllipseItem;
+	start_marker.row = 0;
+	start_marker.col = 0;
+	
+	start_marker.pen = QPen(Qt::black);
+	start_marker.brush = QBrush(Qt::green);
+	stop_marker.pen = QPen(Qt::black);
+	stop_marker.brush = QBrush(Qt::red);
+	start_marker.circle->setPen(start_marker.pen);
+	start_marker.circle->setBrush(start_marker.brush);
+	stop_marker.circle->setPen(stop_marker.pen);
+	stop_marker.circle->setBrush(stop_marker.brush);
+	/*start_marker.circle.setWidth(2);
+	start_marker.circle.setHeight(2);
+	stop_marker.circle.setWidth(2);
+	stop_marker.circle.setHeight(2);*/
 	
 	cursoritem = new QGraphicsPixmapItem;
 	placeritem = new Tile;
@@ -73,8 +98,8 @@ TileView::TileView(QWidget *parent)
 	placerpix.fill(Qt::transparent);
 	cursorpix.fill(Qt::transparent); // Otherwise you get a black background :(
 	QPainter painter(&cursorpix), painter2(&placerpix);
-	QColor red(120,30,45,45);
-	QColor yellow(200,200,120,80); 
+	QColor red(120,30,45,125);
+	QColor yellow(200,10,120,80); 
 	
 	painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
 	painter2.setPen(Qt::NoPen);
@@ -165,4 +190,69 @@ void TileView::mouseReleaseEvent ( QMouseEvent * event )
 		}
 	}*/
 	QGraphicsView::mouseReleaseEvent(event);
+}
+
+void TileView::setupActions()
+{
+	setVRAMStartMarker = new QAction(tr("Set Start Marker"), this);
+	setVRAMStopMarker = new QAction(tr("Set Stop Marker"), this);
+	
+	connect(setVRAMStopMarker, SIGNAL(triggered()), this, SLOT(setStopMarker()));
+	connect(setVRAMStartMarker, SIGNAL(triggered()), this, SLOT(setStartMarker()));
+	
+	// questionable
+	addAction(setVRAMStartMarker);
+	addAction(setVRAMStopMarker);
+	setContextMenuPolicy(Qt::ActionsContextMenu);
+}
+
+void TileView::setStartMarker()
+{
+	int x,y;
+	//bool found=false;
+	
+	for (y=0; y<rows; y++)
+	{
+		for (x=0; x<cols; x++)
+		{
+			if (VRAMgrid[y][x]->hovering)
+				break;
+		}
+		if (VRAMgrid[y][x]->hovering)
+			break;
+	}
+	
+	//start_marker.x = x;
+	//start_marker.y = y;
+	
+	Tile *ptr = VRAMgrid[y][x];
+	
+	//start_marker.circle.setX(ptr->x()+(twidth-2));
+	//start_marker.circle.setY(ptr->y()+2);
+	start_marker.circle->setRect(ptr->x()+(twidth-2), ptr->y()+2, 2,2);
+}
+
+void TileView::setStopMarker()
+{
+	int x,y;
+	debug<<"HAHAHAHAHA";
+	for (y=0; y<rows; y++)
+	{
+		for (x=0; x<cols; x++)
+		{
+			if (VRAMgrid[y][x]->hovering)
+				break;
+		}
+		if (VRAMgrid[y][x]->hovering)
+			break;
+	}
+	
+	//stop_marker.x = x;
+	//stop_marker.y = y;
+	
+	Tile *ptr = VRAMgrid[0][1];
+	
+	//stop_marker.circle.setX(ptr->x()+(twidth-2));
+	//stop_marker.circle.setY(ptr->y()+2);
+	stop_marker.circle->setRect(ptr->x()+(twidth-2), ptr->y()+2, 2,2);
 }

@@ -90,7 +90,7 @@ void MainWindow::save()
 void MainWindow::saveAs()
 {
     if (activeEditor())
-        activeEditor();//->saveAs();
+        activeEditor()->saveAs();
 }
 
 void MainWindow::cut()

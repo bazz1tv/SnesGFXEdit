@@ -36,6 +36,8 @@ public:
 	Tile *topleft16x16, *topleft32x32, *topleft64x64;
 	int sig;
 	
+	bool hovering;
+	
 	//void doMouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 	
 protected:
@@ -44,6 +46,7 @@ protected:
 	void mouseReleaseEvent ( QGraphicsSceneMouseEvent * event );
 	QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 	void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
+	void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
 	/*QSize sizeHint() const;
 	void paintEvent ( QPaintEvent * event );
     void wheelEvent(QWheelEvent *event);
