@@ -73,6 +73,12 @@ void Tile::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
 	
 	//TileView *view = (TileView*)scene()->views().at(0);
+	if(event->button() == Qt::RightButton)
+	{
+		debug<<"You Clicked Right Mouse Button from Tile class\n\n";
+		//msgBox->show();
+		return;
+	} 	  
 	selected = !selected;
 	
 	if (selected)
@@ -303,7 +309,7 @@ void Tile::mousePressEvent ( QGraphicsSceneMouseEvent * event )
 void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 {
 	//QGraphicsPixmapItem::hoverEnterEvent(event);
-	//hovering = true;
+	hovering = true;
 	
 	if (!view)
 		view = (TileView*)scene()->views().at(0);
@@ -319,5 +325,5 @@ void Tile::hoverEnterEvent ( QGraphicsSceneHoverEvent * event )
 
 void Tile::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event )
 {
-	//hovering = false;
+	hovering = false;
 }

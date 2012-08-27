@@ -2,19 +2,22 @@
 #define TILEVIEW_H
 
 #include <QGraphicsView>
+#include <QMenu>
 #include "tile.h"
 
 struct VRAM_Marker {
 	//int x,y;
 	QGraphicsEllipseItem *circle;
 	int row,col;
+	
+	// remember to remove the rest of this if not needed *NEEDED*
 	QPen pen;
 	QBrush brush;
 };
 
 class TileView : public QGraphicsView
 {
-    Q_OBJECT
+    Q_OBJECT // i forget why we need this
 
 public:
     TileView(QWidget *parent = 0);
@@ -24,8 +27,11 @@ public:
 	double zoom,oldzoom;
 	int tileWHLSize, tileHHLSize;
 	QGraphicsPixmapItem *cursoritem;
+	
+	QMenu right_click_menu;
+	
 	Tile *placeritem;
-	Tile *selected_tile;
+	Tile *selected_tile, *hovering_tile;
 	QPixmap cursorbuf, cursorpix;
 	QPixmap placerbuf, placerpix;
 	bool firstPaint;

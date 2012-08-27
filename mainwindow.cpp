@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     createStatusBar();
 
 	//setWindowIcon(QPixmap(":/images/icon.png"));
-    setWindowTitle(tr("MDI Editor"));
+    setWindowTitle(tr("SNESGfxEdit"));
     QTimer::singleShot(0, this, SLOT(loadFiles())); // ?
 }
 
@@ -136,14 +136,6 @@ void MainWindow::setZoom(int id)
 	Editor *editor = activeEditor();
 	// set zoom factor to id of radio button
 	editor->setZoom(id);
-	//editor->setMaximumSize((editor->zoom*((editor->cols*9)+1)),editor->zoom*((editor->rows*9)+1));
-	//editor->view->scale(2,2);
-	//editor->view->show();
-	///editor->scene->update(editor->scene->sceneRect());
-	//QWidget * viewport = activeEditor()->view->viewport();
-	//viewport->update();
-	//activeEditor()->view->updateScene(activeEditor()->scene->sceneRect());
-	//activeEditor()->view->repaint();
 }
 
 void MainWindow::updateCursor(int id)
@@ -394,7 +386,7 @@ void MainWindow::addEditor(Editor *editor)
     QMdiSubWindow *subWindow = mdiArea->addSubWindow(editor);
     windowMenu->addAction(editor->windowMenuAction());
     windowActionGroup->addAction(editor->windowMenuAction());
-	subWindow->setWindowIcon(QPixmap(":/images/document.png"));
+		subWindow->setWindowIcon(QPixmap(":/images/document.png"));
     subWindow->show();
 }
 

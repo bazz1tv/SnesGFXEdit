@@ -14,19 +14,6 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 	view = new TileView(this);
 	//setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	
-	//cursorBuf = new QPixmap;
-	//m_LPixmap = new QPixmap(view->zoom*(view->tileWHLSize),view->zoom*(view->tileHHLSize));
-	/*m_LPixmap->fill(Qt::transparent); // Otherwise you get a black background :(
-	QPainter painter(m_LPixmap);
-	QColor red(255,0,0,128);
-	
-	painter.setPen(Qt::NoPen);        // Otherwise you get an thin black border
-	painter.setBrush(red);
-	
-	painter.drawRect(0,0,view->zoom*(view->tileWHLSize),view->zoom*(view->tileHHLSize));
-	m_Cursor = QCursor(*m_LPixmap);*/
-	//setCursor(m_Cursor);
-	
 	VRAM = NULL;
 	rows = 32;
 	cols = 16;
@@ -83,14 +70,6 @@ Editor::Editor(QWidget *parent) : QMainWindow(parent)
 void Editor::mouseMove(QGraphicsSceneMouseEvent *event)
 {
 	debug<<"hello??";
-	//QPointF pos(event->pos());
-	//int x,y;
-	
-	// tile
-	//x =  pos.x()/(9*view->zoom);
-	//y = pos.y()/(9*view->zoom);
-	
-	//cursor->setPos(VRAMgrid[x][y]->gridx,VRAMgrid[x][y]->gridy);
 	
 }
 
@@ -102,18 +81,6 @@ Editor::~Editor()
 		delete gridPI;
 	if (VRAM != NULL)
 		delete VRAM;
-
-	/*for (int row = 0; row<rows;row++)
-	{
-		for (int col=0; col<cols; col++)
-		{
-			// vars??
-			if (VRAMgrid_img[row][col])
-				delete VRAMgrid_img[row][col];
-		}
-	}*/
-	//delete m_LPixmap;
-	//delete cursorBuf;
 	
 	if (gridimg != NULL)
 		delete gridimg;
@@ -422,11 +389,6 @@ bool Editor::readColors(const QString &fileName)
 	QRgb result;
 	bool nopalette;
 	
-	
-	//VRAM->load(fileName, "pic");
-	//*debugstream<<"Format: "<<VRAM->format()<<endl;
-	//VRAM->setColorCount(16);
-	
 	QString clrfile(fileName);
 	clrfile.chop(3);
 	clrfile+="clr";
@@ -529,16 +491,6 @@ bool Editor::readColors(const QString &fileName)
 	
 	pixmap = QPixmap::fromImage(*VRAM, Qt::ColorOnly);	// there are options available
 	view->VRAMpixmap = pixmap;
-	//gscene->addPixmap(pixmap);
-	//setCentralWidget(gview); // change to graphics view
-	//gview->show();
-	//grid->addWidget((QWidget*)VRAM, 0,0);
-	
-	
-	// need to fill up vram8x8
-	// width and height stay 8x8
-	// but must move 16 across and 32 down (tiles)
-	// QRect(x,y,width,height)
 	
 	Tile *ptr32x32, *ptr64x64;
 	Tile *ptr16x16 = ptr32x32 = ptr64x64 = view->VRAMgrid[0][0];
@@ -634,7 +586,7 @@ bool Editor::readColors(const QString &fileName)
 	
 	//view->start_marker.circle->setX(view->VRAMgrid[view->start_marker.row][view->start_marker.col]->x());
 	//view->start_marker.circle->setY(view->VRAMgrid[view->stop_marker.row][view->stop_marker.col]->y());
-	view->start_marker.circle->setRect(ptr->x()+(twidth-2),ptr->y()+2, 2,2);
+	view->start_marker.circle->setRect(ptr->x()/*+(twidth-2)*/,ptr->y()+2, 2,2);
 	
 	ptr = view->VRAMgrid[view->stop_marker.row][view->stop_marker.col];
 	//view->stop_marker.circle->setX(view->VRAMgrid[view->stop_marker.row][view->stop_marker.col]->x());

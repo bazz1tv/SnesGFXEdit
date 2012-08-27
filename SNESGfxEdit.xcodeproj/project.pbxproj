@@ -1,0 +1,488 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01A64F2F92BDF1018FDFD845 /* qrc_mdieditor.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 9079B226239CFF22AD75B6EA /* qrc_mdieditor.cpp */; settings = {ATTRIBUTES = (); }; };
+		1E1E28184B18AD37A7520DE9 /* globals.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = B379A8C152B613CC28B1F916 /* globals.cpp */; settings = {ATTRIBUTES = (); }; };
+		1F1E85436FA5A6F2BA3C99D5 /* tileview.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 8B0450AAFC9C970F324D2380 /* tileview.cpp */; settings = {ATTRIBUTES = (); }; };
+		204EDFAF3269B294371D7373 /* QtCore in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = FC65490F7BEA4427C242848C /* QtCore */; };
+		26C2BED6C570C95F5243C556 /* moc_mainwindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */; settings = {ATTRIBUTES = (); }; };
+		2B093CA6F071B023A473CED0 /* main.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 118FCBAABA162BA17933C789 /* main.cpp */; settings = {ATTRIBUTES = (); }; };
+		2E8A3C46E487E62791DCA87A /* moc_tileview.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = B5B7A9DD359EC4CEECA8F690 /* moc_tileview.cpp */; settings = {ATTRIBUTES = (); }; };
+		3B7E26C095F17917F557F0BB /* QtGui in Frameworks & Libraries */ = {isa = PBXBuildFile; fileRef = 6988CE9D964BC66484DA49D5 /* QtGui */; };
+		40654E083B64EFB24FF831F5 /* editor.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = C97C1BF6964BFF7FB53C2207 /* editor.cpp */; settings = {ATTRIBUTES = (); }; };
+		462C0F34BBEF2375A9469BB5 /* mainwindow.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */; settings = {ATTRIBUTES = (); }; };
+		52D918C93E6B4532A70538FF /* icon.icns in Bundle Resources */ = {isa = PBXBuildFile; fileRef = 5C6B3BBE9AE4B4D2DE8D38C7 /* icon.icns */; settings = {ATTRIBUTES = (); }; };
+		90FF6A19E10D69FBD89F97C5 /* tile.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 0AA4E3F2ED69BB050E756869 /* tile.cpp */; settings = {ATTRIBUTES = (); }; };
+		D281C78037A26D5D4ECABF58 /* moc_editor.cpp in Build Sources */ = {isa = PBXBuildFile; fileRef = 7115EF4A42DA82DCF28929BA /* moc_editor.cpp */; settings = {ATTRIBUTES = (); }; };
+		E93FAA2C1575B8EE00AB8A63 /* SNESGfxEdit.app in Project Copy */ = {isa = PBXBuildFile; fileRef = E93FAA291575B8EE00AB8A63 /* SNESGfxEdit.app */; };
+		E9A67961157DD7AB00FEB217 /* ToDo in Bundle Resources */ = {isa = PBXBuildFile; fileRef = E9A67960157DD7AB00FEB217 /* ToDo */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F6069D5A5DA8AA28EDB8B3C6 /* Project Copy */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /Users/bazz/Projects/SNESGfxEdit;
+			dstSubfolderSpec = 0;
+			files = (
+				E93FAA2C1575B8EE00AB8A63 /* SNESGfxEdit.app in Project Copy */,
+			);
+			name = "Project Copy";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0AA4E3F2ED69BB050E756869 /* tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tile.cpp; sourceTree = "<group>"; };
+		118FCBAABA162BA17933C789 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = moc_mainwindow.cpp; sourceTree = "<group>"; };
+		445E50CBA7F53EE89D122875 /* tileview.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tileview.h; sourceTree = "<group>"; };
+		45976686A07321410A8553C5 /* globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = globals.h; sourceTree = "<group>"; };
+		46B0F550586BE2149AE1B57A /* mdieditor.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; path = mdieditor.qrc; sourceTree = "<group>"; };
+		5C6B3BBE9AE4B4D2DE8D38C7 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = images/icon.icns; sourceTree = "<group>"; };
+		6988CE9D964BC66484DA49D5 /* QtGui */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtGui; path = /opt/local/lib/libQtGui.4.7.4.dylib; sourceTree = "<absolute>"; };
+		7115EF4A42DA82DCF28929BA /* moc_editor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = moc_editor.cpp; sourceTree = "<group>"; };
+		8B0450AAFC9C970F324D2380 /* tileview.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tileview.cpp; sourceTree = "<group>"; };
+		9079B226239CFF22AD75B6EA /* qrc_mdieditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = qrc_mdieditor.cpp; sourceTree = "<group>"; };
+		91F95E6277491B7A01AC372E /* editor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = editor.h; sourceTree = "<group>"; };
+		B379A8C152B613CC28B1F916 /* globals.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = globals.cpp; sourceTree = "<group>"; };
+		B5B7A9DD359EC4CEECA8F690 /* moc_tileview.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = moc_tileview.cpp; sourceTree = "<group>"; };
+		C63FA392C61F27B1B13369C1 /* mainwindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mainwindow.h; sourceTree = "<group>"; };
+		C97C1BF6964BFF7FB53C2207 /* editor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = editor.cpp; sourceTree = "<group>"; };
+		DA7033AFDA90D4B790E617A0 /* tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
+		E8307765BBAEA32AA7A693F4 /* SNESGfxEdit.pro */ = {isa = PBXFileReference; lastKnownFileType = text; path = SNESGfxEdit.pro; sourceTree = "<group>"; };
+		E93FAA291575B8EE00AB8A63 /* SNESGfxEdit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SNESGfxEdit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9A67960157DD7AB00FEB217 /* ToDo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ToDo; sourceTree = "<group>"; };
+		EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mainwindow.cpp; sourceTree = "<group>"; };
+		FC65490F7BEA4427C242848C /* QtCore */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = QtCore; path = /opt/local/lib/libQtCore.4.7.4.dylib; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2A1043669E6E5A7426EA502A /* Frameworks & Libraries */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B7E26C095F17917F557F0BB /* QtGui in Frameworks & Libraries */,
+				204EDFAF3269B294371D7373 /* QtCore in Frameworks & Libraries */,
+			);
+			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05596AB53D8D521C69802C27 /* SNESGfxEdit */ = {
+			isa = PBXGroup;
+			children = (
+				FB61758D0F0FDA4BA867C3D5 /* Sources */,
+				46E892BBB6BB6952967E0561 /* Temporary Sources */,
+				883D7615C4D2DE3FA1218F12 /* Headers */,
+				7CABE3C80E79AD2B307756D2 /* Sources [qmake] */,
+				52C235EBF1C9B07808119459 /* Sources [RCC] */,
+				ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */,
+				E93FAA2A1575B8EE00AB8A63 /* Products */,
+			);
+			name = SNESGfxEdit;
+			sourceTree = "<group>";
+		};
+		1DDD228647F922E13FD1C581 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				5C6B3BBE9AE4B4D2DE8D38C7 /* icon.icns */,
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
+		46E892BBB6BB6952967E0561 /* Temporary Sources */ = {
+			isa = PBXGroup;
+			children = (
+				7115EF4A42DA82DCF28929BA /* moc_editor.cpp */,
+				336D3C48DD3B44974395C633 /* moc_mainwindow.cpp */,
+				B5B7A9DD359EC4CEECA8F690 /* moc_tileview.cpp */,
+				9079B226239CFF22AD75B6EA /* qrc_mdieditor.cpp */,
+			);
+			name = "Temporary Sources";
+			sourceTree = "<group>";
+		};
+		52C235EBF1C9B07808119459 /* Sources [RCC] */ = {
+			isa = PBXGroup;
+			children = (
+				46B0F550586BE2149AE1B57A /* mdieditor.qrc */,
+			);
+			name = "Sources [RCC]";
+			sourceTree = "<group>";
+		};
+		7CABE3C80E79AD2B307756D2 /* Sources [qmake] */ = {
+			isa = PBXGroup;
+			children = (
+				E8307765BBAEA32AA7A693F4 /* SNESGfxEdit.pro */,
+				E9A67960157DD7AB00FEB217 /* ToDo */,
+			);
+			name = "Sources [qmake]";
+			sourceTree = "<group>";
+		};
+		883D7615C4D2DE3FA1218F12 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				91F95E6277491B7A01AC372E /* editor.h */,
+				C63FA392C61F27B1B13369C1 /* mainwindow.h */,
+				445E50CBA7F53EE89D122875 /* tileview.h */,
+				45976686A07321410A8553C5 /* globals.h */,
+				DA7033AFDA90D4B790E617A0 /* tile.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		E93FAA2A1575B8EE00AB8A63 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E93FAA291575B8EE00AB8A63 /* SNESGfxEdit.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ED1E82605DD74B483AF3C982 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				6988CE9D964BC66484DA49D5 /* QtGui */,
+				FC65490F7BEA4427C242848C /* QtCore */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		FB61758D0F0FDA4BA867C3D5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C97C1BF6964BFF7FB53C2207 /* editor.cpp */,
+				118FCBAABA162BA17933C789 /* main.cpp */,
+				EA177DE95BF7D3EF58EE43F7 /* mainwindow.cpp */,
+				8B0450AAFC9C970F324D2380 /* tileview.cpp */,
+				B379A8C152B613CC28B1F916 /* globals.cpp */,
+				0AA4E3F2ED69BB050E756869 /* tile.cpp */,
+				1DDD228647F922E13FD1C581 /* images */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5DF46F65FBB1567F1F8646AB /* SNESGfxEdit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E93FAA3D1575B90D00AB8A63 /* Build configuration list for PBXNativeTarget "SNESGfxEdit" */;
+			buildPhases = (
+				D7BA7D76DAB5DD13389D6332 /* Qt Qmake */,
+				A0A52A2ADF7A1E2A99738674 /* Qt Preprocessors */,
+				F6069D5A5DA8AA28EDB8B3C6 /* Project Copy */,
+				C29B8785722055ED95EF7B57 /* Build Sources */,
+				2A1043669E6E5A7426EA502A /* Frameworks & Libraries */,
+				3787F99312C85FF0073FD7BA /* Bundle Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SNESGfxEdit;
+			productName = SNESGfxEdit;
+			productReference = E93FAA291575B8EE00AB8A63 /* SNESGfxEdit.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91B15E841AA80083484172DE /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 2A951308CDB28F104D0A4BD2 /* Build configuration list for PBXProject "SNESGfxEdit" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 05596AB53D8D521C69802C27 /* SNESGfxEdit */;
+			productRefGroup = E93FAA2A1575B8EE00AB8A63 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DF46F65FBB1567F1F8646AB /* SNESGfxEdit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3787F99312C85FF0073FD7BA /* Bundle Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52D918C93E6B4532A70538FF /* icon.icns in Bundle Resources */,
+				E9A67961157DD7AB00FEB217 /* ToDo in Bundle Resources */,
+			);
+			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0A52A2ADF7A1E2A99738674 /* Qt Preprocessors */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "Qt Preprocessors";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/bazz/Projects/SNESGfxEdit -f 'SNESGfxEdit.xcodeproj/qt_preprocess.mak'";
+		};
+		D7BA7D76DAB5DD13389D6332 /* Qt Qmake */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "Qt Qmake";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/bazz/Projects/SNESGfxEdit -f 'SNESGfxEdit.xcodeproj/qt_makeqmake.mak'";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C29B8785722055ED95EF7B57 /* Build Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40654E083B64EFB24FF831F5 /* editor.cpp in Build Sources */,
+				2B093CA6F071B023A473CED0 /* main.cpp in Build Sources */,
+				462C0F34BBEF2375A9469BB5 /* mainwindow.cpp in Build Sources */,
+				1F1E85436FA5A6F2BA3C99D5 /* tileview.cpp in Build Sources */,
+				1E1E28184B18AD37A7520DE9 /* globals.cpp in Build Sources */,
+				90FF6A19E10D69FBD89F97C5 /* tile.cpp in Build Sources */,
+				D281C78037A26D5D4ECABF58 /* moc_editor.cpp in Build Sources */,
+				26C2BED6C570C95F5243C556 /* moc_mainwindow.cpp in Build Sources */,
+				2E8A3C46E487E62791DCA87A /* moc_tileview.cpp in Build Sources */,
+				01A64F2F92BDF1018FDFD845 /* qrc_mdieditor.cpp in Build Sources */,
+			);
+			name = "Build Sources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8DB1DD96F65B1BF1FFC506E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+			};
+			name = Debug;
+		};
+		95E1EB2E5DDD587BE5B3E548 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+			};
+			name = Release;
+		};
+		E93FAA301575B8EF00AB8A63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				BUILD_ROOT = /Users/bazz/Projects/SNESGfxEdit;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					.,
+					.,
+					/opt/local/include/QtGui,
+					/opt/local/include/QtCore,
+					/opt/local/include,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/opt/local/share/qt4/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-L/opt/local/lib",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SNESGfxEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				YACCFLAGS = "-d";
+			};
+			name = Debug;
+		};
+		E93FAA311575B8EF00AB8A63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				BUILD_ROOT = /Users/bazz/Projects/SNESGfxEdit;
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				HEADER_SEARCH_PATHS = (
+					.,
+					.,
+					/opt/local/include/QtGui,
+					/opt/local/include/QtCore,
+					/opt/local/include,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/opt/local/share/qt4/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-L/opt/local/lib",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SNESGfxEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				YACCFLAGS = "-d";
+			};
+			name = Release;
+		};
+		E93FAA321575B8EF00AB8A63 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				BUILD_ROOT = /Users/bazz/Projects/SNESGfxEdit;
+				DYLIB_COMPATIBILITY_VERSION = 1.0;
+				DYLIB_CURRENT_VERSION = 1.0.0;
+				HEADER_SEARCH_PATHS = (
+					.,
+					.,
+					/opt/local/include/QtGui,
+					/opt/local/include/QtCore,
+					/opt/local/include,
+					/usr/local/include,
+					/System/Library/Frameworks/CarbonCore.framework/Headers,
+					"/opt/local/share/qt4/mkspecs/macx-xcode",
+				);
+				INFOPLIST_FILE = Info.plist;
+				LEXFLAGS = "";
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-O2",
+					"-Wall",
+					"-W",
+					"-DQT_NO_DEBUG",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED",
+				);
+				OTHER_LDFLAGS = (
+					"-headerpad_max_install_names",
+					"-L/opt/local/lib",
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = SNESGfxEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				YACCFLAGS = "-d";
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2A951308CDB28F104D0A4BD2 /* Build configuration list for PBXProject "SNESGfxEdit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DB1DD96F65B1BF1FFC506E0 /* Debug */,
+				95E1EB2E5DDD587BE5B3E548 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E93FAA3D1575B90D00AB8A63 /* Build configuration list for PBXNativeTarget "SNESGfxEdit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E93FAA301575B8EF00AB8A63 /* Debug */,
+				E93FAA311575B8EF00AB8A63 /* Release */,
+				E93FAA321575B8EF00AB8A63 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91B15E841AA80083484172DE /* Project object */;
+}

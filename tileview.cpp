@@ -48,15 +48,15 @@ void TileView::updateCursor()
 TileView::TileView(QWidget *parent)
     : QGraphicsView(parent)
 {
-	for (int row=0; row < rows; row++)
+	/*for (int row=0; row < rows; row++)
 	{
 		for (int col=0; col < cols; col++)
 		{
 			//VRAMgrid_img[row][col] = new QImage;
 		}
-	}
+	}*/
 	
-    setDragMode(NoDrag);
+	setDragMode(NoDrag);
 	tileWHLSize = tileHHLSize = 8;
 	zoom = 1;
 	firstPaint = true;
@@ -64,8 +64,22 @@ TileView::TileView(QWidget *parent)
 	tilesize = SIZE_8x8;
 	preview_original = true;
 	
+	// Setup right-click menu
+	
+	
 	setupActions();
 	
+	/*start_marker.circle = new QGraphicsTextItem;
+	start_marker.row = 0;
+	start_marker.col = 0;
+	stop_marker.circle = new QGraphicsTextItem;
+	
+	start_marker.text->setFont(QFont("Times", 6));
+	stop_marker.text->setFont(QFont("Times", 6));
+	start_marker.text->setPlainText(QString("Start"));
+	stop_marker.text->setPlainText(QString("Stop"));*/
+	
+	// Leaving in mind how to work in the context of different tile mode (8x8, 16x16, 32x32)
 	start_marker.circle = new QGraphicsEllipseItem;
 	stop_marker.circle = new QGraphicsEllipseItem;
 	start_marker.row = 0;
@@ -79,6 +93,10 @@ TileView::TileView(QWidget *parent)
 	start_marker.circle->setBrush(start_marker.brush);
 	stop_marker.circle->setPen(stop_marker.pen);
 	stop_marker.circle->setBrush(stop_marker.brush);
+	
+	start_marker.circle->setVisible(true);
+	stop_marker.circle->setVisible(true);
+	
 	/*start_marker.circle.setWidth(2);
 	start_marker.circle.setHeight(2);
 	stop_marker.circle.setWidth(2);
@@ -177,6 +195,59 @@ void TileView::wheelEvent(QWheelEvent *event)
 
 void TileView::mouseReleaseEvent ( QMouseEvent * event )
 {
+	// debug code for checking right click over Tile map
+	if(event->button() == Qt::RightButton)
+	{
+		debug<<"You Clicked Right Mouse Button from View class\n\n";
+		
+		int x,y;
+		 
+		for (y=0; y<rows; y++)
+		{
+			for (x=0; x<cols; x++)
+			{
+				if (VRAMgrid[y][x]->hovering)
+					break;
+			}
+			
+			if (VRAMgrid[y][x]->hovering)
+				break;
+		}
+		
+		hovering_tile = VRAMgrid[y][x]; //this is tested to be accurate x, and y 
+		char str[100];
+		sprintf(str, "tile[%d][%d] right-clicked\n", y, x);
+		debug<<str;
+		
+		
+		/*QAction* selectedItem = */right_click_menu.exec(mapToGlobal(QPoint(hovering_tile->gridx*zoom,hovering_tile->gridy*zoom)));
+    /*if (selectedItem)
+    {
+			// something was chosen, do stuff
+			debug<<"selected";
+    }
+    else
+    {
+			debug<<"nothing selected\n";
+			// nothing was chosen
+    }*/
+		/* To-Do
+		 ---------
+		 write the code to spawn the context menu. we have the correct row and col variables,
+		 now we just have to set the Start or End correctly. Use Text. make it small, its ok.
+		 
+		 QGraphicsTextItem *start_marker,*end_marker
+		 */
+		
+		// valuable for debugging messages
+		/*QMessageBox *msgBox = new QMessageBox();
+		msgBox->setWindowTitle("Hello");
+		msgBox->setText(str);
+		msgBox->show();*/ 
+		
+		return;
+	} 
+	
 	/*QGraphicsItem* item = (this->scene()->itemAt(event->pos()));
 		
 	debug<<"event pos: "<<event->pos().x()<<","<<event->pos().y()<<endl;
@@ -189,6 +260,10 @@ void TileView::mouseReleaseEvent ( QMouseEvent * event )
 				tmp->doMouseReleaseEvent(NULL);
 		}
 	}*/
+	
+	//selected_tile = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(this->scene()->itemAt(event->pos().x()+4,event->pos().y()+4));
+	
+	//debug<<"tile["<<selected_tile->gridx<<"]["<<selected_tile->gridy<<"] right-clicked\n\n";
 	QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -200,18 +275,28 @@ void TileView::setupActions()
 	connect(setVRAMStopMarker, SIGNAL(triggered()), this, SLOT(setStopMarker()));
 	connect(setVRAMStartMarker, SIGNAL(triggered()), this, SLOT(setStartMarker()));
 	
+	right_click_menu.addAction(setVRAMStartMarker);
+	right_click_menu.addAction(setVRAMStopMarker);
+	
+	// code for double click context menu
+	// myWidget is any QWidget-derived class
+	/*setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+					this, SLOT(ShowContextMenu(const QPoint&)));*/
+	
 	// questionable
-	addAction(setVRAMStartMarker);
-	addAction(setVRAMStopMarker);
-	setContextMenuPolicy(Qt::ActionsContextMenu);
+	//addAction(setVRAMStartMarker);
+	//addAction(setVRAMStopMarker);
+	//setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
+/* have it write text "start" and "end" */
 void TileView::setStartMarker()
 {
-	int x,y;
+	//int x,y;
 	//bool found=false;
 	
-	for (y=0; y<rows; y++)
+	/*for (y=0; y<rows; y++)
 	{
 		for (x=0; x<cols; x++)
 		{
@@ -220,39 +305,26 @@ void TileView::setStartMarker()
 		}
 		if (VRAMgrid[y][x]->hovering)
 			break;
-	}
+	}*/
 	
-	//start_marker.x = x;
-	//start_marker.y = y;
+	start_marker.col = hovering_tile->col;
+	start_marker.row = hovering_tile->row;
 	
-	Tile *ptr = VRAMgrid[y][x];
+	//Tile *ptr = VRAMgrid[y][x];
 	
-	//start_marker.circle.setX(ptr->x()+(twidth-2));
-	//start_marker.circle.setY(ptr->y()+2);
-	start_marker.circle->setRect(ptr->x()+(twidth-2), ptr->y()+2, 2,2);
+	//start_marker.circle->setX(ptr->gridx);
+	//start_marker.circle->setY(ptr->gridy);
+	start_marker.circle->setRect(hovering_tile->x()+(twidth-2), hovering_tile->y()+2, 2,2);
 }
 
 void TileView::setStopMarker()
-{
-	int x,y;
-	debug<<"HAHAHAHAHA";
-	for (y=0; y<rows; y++)
-	{
-		for (x=0; x<cols; x++)
-		{
-			if (VRAMgrid[y][x]->hovering)
-				break;
-		}
-		if (VRAMgrid[y][x]->hovering)
-			break;
-	}
+{	
+	stop_marker.row = hovering_tile->col;
+	stop_marker.col = hovering_tile->row;
 	
-	//stop_marker.x = x;
-	//stop_marker.y = y;
-	
-	Tile *ptr = VRAMgrid[0][1];
+	//Tile *ptr = VRAMgrid[y][x];
 	
 	//stop_marker.circle.setX(ptr->x()+(twidth-2));
 	//stop_marker.circle.setY(ptr->y()+2);
-	stop_marker.circle->setRect(ptr->x()+(twidth-2), ptr->y()+2, 2,2);
+	stop_marker.circle->setRect(hovering_tile->x(), hovering_tile->y()+2, 2,2);
 }
