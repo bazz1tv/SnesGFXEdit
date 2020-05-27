@@ -1,3 +1,4 @@
+QT += core widgets
 TEMPLATE      = app
 DEPENDPATH += .
 INCLUDEPATH += .

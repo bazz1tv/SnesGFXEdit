@@ -8,9 +8,10 @@
  */
 #ifndef GLOBALS_H
 #define GLOBALS_H
-#include <QFile>
+#include <QtWidgets>
+/*#include <QFile>
 #include <QTextStream>
-#include <QCursor>
+#include <QCursor>*/
 
 #define MODE_SWAP 0
 #define MODE_MOVE 1

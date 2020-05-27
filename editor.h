@@ -6,9 +6,9 @@
 //#define ROWS 32
 //#define COLS 16
 
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QMainWindow>
+#include <QtWidgets> // QGraphicsScene>
+/*#include <QGraphicsView>
+#include <QMainWindow>*/
 
 class TileView;
 class Tile;

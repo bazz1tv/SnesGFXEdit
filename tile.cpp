@@ -201,7 +201,7 @@ void Tile::mouseMoveEvent ( QGraphicsSceneMouseEvent * event )
 		// X = (col+1)+(col*TWIDTH), Y = (1+row)+(row*THEIGHT)
 		QPointF p(event->scenePos());
 		debug<<"oX: "<<p.x()<<" oY: "<<p.y()<<endl;
-		Tile *tile_undercursor = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y())));
+        Tile *tile_undercursor = (Tile*)qgraphicsitem_cast<QGraphicsPixmapItem*>(view->scene()->itemAt(floor(p.x()),floor(p.y()),QTransform::QTransform()));
 		
 		/*if (tile_undercursor->gridx == -1) // if we detect the cursor image on top
 		{
