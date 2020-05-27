@@ -387,7 +387,7 @@ bool Editor::readColors(const QString &fileName)
 	quint8 r,g,b,temp;
 	quint8 highbits;
 	QRgb result;
-	bool nopalette;
+	bool nopalette = true;
 	
 	QString clrfile(fileName);
 	clrfile.chop(3);
@@ -421,7 +421,7 @@ bool Editor::readColors(const QString &fileName)
 	}
 	
 	// Do a gray-scale palette if no color file is found
-	if (!file.open(QIODevice::ReadOnly) || nopalette)
+	if (nopalette || !file.open(QIODevice::ReadOnly))
 	{
 		int c=255;
 		for(int i=1; i<16; i++)
