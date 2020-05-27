@@ -1,8 +1,0 @@
-lets make the start and stop code highlighted green and red rectangles.
-
-yep : )
-
-to do this we will look at the code for the highlight tile
-and copy it with different color masks instead.
-
-Add an option to hide these color masks incase the user does not wanted to be bothered by them :)
